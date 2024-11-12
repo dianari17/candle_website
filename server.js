@@ -33,7 +33,6 @@ app.post('/api/addProduct', async (req, res, next) => {
     try {
         const db = client.db();
         const result = db.collection('products').insertOne(newProduct);
-        console.log("Success, i think");
     }
     catch(e)
     {
@@ -42,24 +41,50 @@ app.post('/api/addProduct', async (req, res, next) => {
     }
     var ret = {error: error};
     res.status(200).json(ret);
-})
-// app.post('/api/addcard', async (req, res, next) => {
-//     // incoming: userId, color
-//     // outgoing: error
-//     const { userId, card } = req.body;
-//     const newCard = { Card: card, UserId: userId };
-//     var error = '';
-//     try {
-//         const db = client.db();
-//         const result = db.collection('cards').insertOne(newCard);
-//     }
-//     catch (e) {
-//         error = e.toString();
-//     }
-//     cardList.push(card);
-//     var ret = { error: error };
-//     res.status(200).json(ret);
-// });
+});
+
+app.post('/api/searchProducts', async (req, res, next) => {
+    // incoming: userId, search
+    // outgoing: results[], error
+    var error = '';
+    const { search } = req.body;
+    var _search = search.trim();
+    const db = client.db();
+    const results = await db.collection('products').find({ "Product": { $regex: _search + '.*' } }).toArray();
+    var _ret = [];
+    for (var i = 0; i < results.length; i++) {
+        _ret.push({ID: results[i]._id, Product: results[i].Product});
+    }
+    var ret = { results: _ret, error: error };
+    res.status(200).json(ret);
+});
+
+// TODO: Uses product name for testing. In the future, use object ID instead
+app.post('/api/addToCart', async (req, res, next) => {
+    var error = '';
+
+    const { userId, productId, amount } = req.body;
+
+    const db = client.db();
+
+    // In future, use product's id
+    const productObj = await db.collection('products').findOne({ "Product": { $regex: productId + '.*' }});
+
+    console.log(productObj);
+    if(!productObj)
+    {
+        error = 'Product not found.';
+    }
+    else
+    {
+        db.collection('users').updateOne(
+            {"FirstName": { $regex: userId + '.*'}},                        // User to update
+            { $push: { "Cart": { id: productObj._id, amount: amount } }}    // Add to cart
+        );
+    }
+    res.status(200).json({error: error});
+});
+
 
 // app.post('/api/login', async (req, res, next) => {
 //     // incoming: login, password
@@ -85,21 +110,6 @@ app.post('/api/addProduct', async (req, res, next) => {
 //     res.status(200).json(ret);
 // });
 
-// app.post('/api/searchcards', async (req, res, next) => {
-//     // incoming: userId, search
-//     // outgoing: results[], error
-//     var error = '';
-//     const { userId, search } = req.body;
-//     var _search = search.trim();
-//     const db = client.db();
-//     const results = await db.collection('cards').find({ "Card": { $regex: _search + '.*' } }).toArray();
-//     var _ret = [];
-//     for (var i = 0; i < results.length; i++) {
-//         _ret.push(results[i].Card);
-//     }
-//     var ret = { results: _ret, error: error };
-//     res.status(200).json(ret);
-// });
 
 
 app.listen(5000);
