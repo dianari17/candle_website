@@ -66,8 +66,6 @@ app.post('/api/deleteProduct', async (req, res, next) => {
 // ----------------------------------------------------------------------------------------------------
 
 app.post('/api/searchProducts', async (req, res, next) => {
-    // incoming: userId, search
-    // outgoing: results[], error
     var error = '';
 
     const { search } = req.body;
@@ -85,7 +83,10 @@ app.post('/api/searchProducts', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-// TODO: Uses product name for testing. In the future, use object ID instead
+// ------------------------------------------------ semi danger zone -----------------
+// Need a way to verify a user is who they say they are
+
+// TODO: Swap UserID string field for _id
 app.post('/api/addToCart', async (req, res, next) => {
     var error = '';
 
@@ -94,7 +95,7 @@ app.post('/api/addToCart', async (req, res, next) => {
     const db = client.db();
 
     // In future, use product's id
-    const productObj = await db.collection('products').findOne({ "Product": { $regex: productId + '.*' }});
+    const productObj = await db.collection('products').findOne({ _id: ObjectId.createFromHexString(productId)});
 
     console.log(productObj);
     if(!productObj)
@@ -104,12 +105,36 @@ app.post('/api/addToCart', async (req, res, next) => {
     else
     {
         db.collection('users').updateOne(
-            {"FirstName": { $regex: userId + '.*'}},                        // User to update
+            {"UserID": { $regex: userId + '.*'}},                        // User to update
             { $push: { "Cart": { id: productObj._id, amount: amount } }}    // Add to cart
         );
     }
     res.status(200).json({error: error});
 });
+
+// TODO: Swap UserID string field for _id
+app.post('/api/getCart', async (req, res, next) => {
+    var error = '';
+    var products = [];
+    const { userId } = req.body;
+
+    try{
+        const db = client.db();
+        const user = await db.collection('users').findOne({"UserID": userId});
+        const cart = user.Cart;
+
+        const ids = cart.map(item => item.id);
+        products = await db.collection('products').find({_id: { $in: ids }}).toArray();
+    }
+    catch(e){
+        error = e.toString();
+        console.log(error);
+    }
+    console.log(products.length);
+    res.status(200).json({products: products, error: error});
+})
+
+// -----------------------------------------------------------------------------
 
 
 // app.post('/api/login', async (req, res, next) => {

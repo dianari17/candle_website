@@ -51,17 +51,15 @@ export async function deleteProduct(productId: string) : Promise<string> {
 
 }
 
-// TODO: Use product id instead of product name
-export async function addToCart(productName: string): Promise<string> {
+export async function addToCart(userId: string, productId: string): Promise<string> {
 
-    let obj = { userId: "test", productId: productName, amount: "1" };
+    let payload = JSON.stringify({ userId: userId, productId: productId, amount: "1" });
 
-    let js = JSON.stringify(obj);
     try {
         const response = await
             fetch(server + 'addToCart',
                 {
-                    method: 'POST', body: js, headers: {
+                    method: 'POST', body: payload, headers: {
                         'Content-Type':
                             'application/json'
                     }
@@ -80,7 +78,36 @@ export async function addToCart(productName: string): Promise<string> {
     }
 };
 
-// TODO: Package products in IProduct interface
+export async function getCart(userId: string): Promise<{products: IProduct[], error: string}> {
+    let payload = JSON.stringify({userId: userId});
+
+    try {
+        const response = await
+            fetch(server + 'getCart',
+                {
+                    method: 'POST', body: payload, headers: {
+                        'Content-Type':
+                            'application/json'
+                    }
+                });
+        let txt = await response.text();
+        let raw = JSON.parse(txt).products;
+        let products : IProduct[] = [];
+        console.log(raw.length);
+        for(let i = 0; i < raw.length; i++)
+        {
+            let cur = raw[i];
+            products.push({id: cur.ID, name: cur.Product, price: 0, image: " "});
+        }
+        
+        return { products: products, error: ''};
+    }
+    catch (error: any) {
+        console.error(error);
+        return { products: [], error: ''};
+    }
+}
+
 export async function searchProduct(query: string): Promise<{products: IProduct[], error: string}> {
     let obj = { search: query };
     let js = JSON.stringify(obj);
@@ -103,12 +130,8 @@ export async function searchProduct(query: string): Promise<{products: IProduct[
         }
         
         return { products: products, error: ''};
-        // setResults('Product(s) have been retrieved');
-        // setProductList(resultText);
     }
     catch (error: any) {
         return { products: [], error: ''};
-        // alert(error.toString());
-        // setResults(error.toString());
     }
 };
