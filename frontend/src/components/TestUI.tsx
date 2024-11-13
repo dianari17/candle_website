@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import TestProduct from './TestProduct';
+import { IProduct } from './IProduct';
+import { addProduct, searchProduct, addToCart } from './APICalls';
 
 function TestUI() {
-    const [search, setSearchValue] = React.useState('');
-    const [searchResults, setResults] = React.useState('');
-    const [productList, setProductList] = React.useState('');
+ 
 
 
     const [addResult, setAddResult] = React.useState('');
@@ -12,91 +13,23 @@ function TestUI() {
     const [cartProduct, setCartProduct] = React.useState('');
     const [cartResult, setCartResult] = React.useState('');
 
-    async function addProduct(e: any): Promise<void> {
-        e.preventDefault();
-        let obj = { product: product };
-        let js = JSON.stringify(obj);
-        try {
-            const response = await
-                fetch('http://localhost:5000/api/addProduct',
-                    {
-                        method: 'POST', body: js, headers: {
-                            'Content-Type':
-                                'application/json'
-                        }
-                    });
-            let txt = await response.text();
-            let res = JSON.parse(txt);
-            if (res.error.length > 0) {
-                setAddResult("API Error:" + res.error);
-            }
-            else {
-                setAddResult('Product has been added');
-            }
-        }
-        catch (error: any) {
-            setAddResult(error.toString());
-        }
-    };
+    const testProducts : IProduct[] = [
+        { id: "-0", name: "Vacuum Cleaner", price: 19.99, image: "Imagine it" },
+        { id: "-1", name: "Broom", price: 20.00, image: "Imagine this, too"},
+        { id: "test", name: "Toothbrush", price: 30.00, image: "toothbruhs imge" }
+    ];
 
-    async function searchProduct(e: any): Promise<void> {
-        e.preventDefault();
-        let obj = { search: search };
-        let js = JSON.stringify(obj);
-        try {
-            const response = await
-                fetch('http://localhost:5000/api/searchProducts',
-                    {
-                        method: 'POST', body: js, headers: {
-                            'Content-Type':
-                                'application/json'
-                        }
-                    });
-            let txt = await response.text();
-            let res = JSON.parse(txt);
-            let _results = res.results;
-            let resultText = '';
-            for (let i = 0; i < _results.length; i++) {
-                resultText += _results[i];
-                if (i < _results.length - 1) {
-                    resultText += ', ';
-                }
-            }
-            setResults('Product(s) have been retrieved');
-            setProductList(resultText);
-        }
-        catch (error: any) {
-            alert(error.toString());
-            setResults(error.toString());
-        }
-    };
 
-    async function addToCart(e: any): Promise<void> {
+    const [search, setSearchValue] = React.useState('');
+    const [searchResults, setResults] = React.useState('');
+    const [products, setProducts] = React.useState<IProduct[]>(testProducts);
+
+    async function onAdd(e: any) {
         e.preventDefault();
-        let obj = { userId: "test", productId: cartProduct, amount: "1" };
-        let js = JSON.stringify(obj);
-        try {
-            const response = await
-                fetch('http://localhost:5000/api/addToCart',
-                    {
-                        method: 'POST', body: js, headers: {
-                            'Content-Type':
-                                'application/json'
-                        }
-                    });
-            let txt = await response.text();
-            let res = JSON.parse(txt);
-            if (res.error.length > 0) {
-                setCartResult("API Error:" + res.error);
-            }
-            else {
-                setCartResult('Product has been added');
-            }
-        }
-        catch (error: any) {
-            setCartResult(error.toString());
-        }
-    };
+        setAddResult(await addProduct(product));
+    }
+
+    
 
     function handleSearchTextChange(e: any): void {
         setSearchValue(e.target.value);
@@ -110,6 +43,26 @@ function TestUI() {
         setCartProduct(e.target.value);
     }
 
+    async function onSearch(e: any) {
+        e.preventDefault();
+        let res : {products: IProduct[], error: string } = await searchProduct(search);
+        if(res.error)
+        {
+            setResults(res.error);
+        }
+        else
+        {
+            setResults("Loaded products successfully.");
+            setProducts(res.products);
+        }
+    }
+
+    async function onAddToCart(e: any) {
+        e.preventDefault();
+        let res : string = await addToCart(cartProduct);
+        setCartResult(res);
+    }
+
     return (
         <div id="productUIDiv">
             <br />
@@ -117,20 +70,26 @@ function TestUI() {
                 onChange={handleSearchTextChange} />
 
             <button type="button" id="searchProductButton" className="buttons"
-                onClick={searchProduct}> Search Product</button><br />
+                onClick={onSearch}> Search Product</button><br />
             <span id="productSearchResult">{searchResults}</span>
-            <p id="productList">{productList}</p><br /><br />
+            <div>
+                {
+                    products.map((product, index) => {
+                        return <TestProduct key={index} {...product}/>
+                    })
+                }
+            </div>
 
             Add: <input type="text" id="productText" placeholder="Product To Add"
                 onChange={handleProductTextChange} />
             <button type="button" id="addProductButton" className="buttons"
-                onClick={addProduct}> Add Product </button><br />
+                onClick={onAdd}> Add Product </button><br />
             <span id="productAddResult">{addResult}</span>
 
             Add to Cart: <input type="text" id="cartText" placeholder="Product To Add"
                 onChange={handleCartAddTextChange} />
             <button type="button" id="addProductToCartButton" className="buttons"
-                onClick={addToCart}> Add Product To Cart </button><br />
+                onClick={onAddToCart}> Add Product To Cart </button><br />
             <span id="cartResult">{cartResult}</span>
 
         </div>

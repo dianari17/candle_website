@@ -1,0 +1,114 @@
+import {IProduct} from './IProduct'
+
+const server = 'http://localhost:5000/api/'
+
+// TODO: Use IProduct for this
+export async function addProduct(product : string): Promise<string> {
+    let obj = { product: product };
+    let js = JSON.stringify(obj);
+    try {
+        const response = await
+            fetch(server + 'addProduct', {
+                    method: 'POST', body: js, headers: {
+                        'Content-Type':
+                            'application/json'
+                    }
+                });
+        let txt = await response.text();
+        let res = JSON.parse(txt);
+        if (res.error.length > 0) {
+            return "API Error: " + res.error;
+        }
+        else {
+            return "Product has been added";
+        }
+    }
+    catch (error: any) {
+        return error.toString();
+    }
+};
+
+export async function deleteProduct(productId: string) : Promise<string> {
+    let payload = JSON.stringify({ productId: productId });
+    try {
+        const response = await
+            fetch(server + 'deleteProduct', {
+                method: 'POST', body: payload, headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        let res = JSON.parse(await response.text());
+        if(res.response.length > 0) {
+            return "API Error: " + res.response;
+        }
+        else {
+            return res.response;
+        }
+    }
+    catch(error: any) {
+        return error.toString();
+    }
+
+}
+
+// TODO: Use product id instead of product name
+export async function addToCart(productName: string): Promise<string> {
+
+    let obj = { userId: "test", productId: productName, amount: "1" };
+
+    let js = JSON.stringify(obj);
+    try {
+        const response = await
+            fetch(server + 'addToCart',
+                {
+                    method: 'POST', body: js, headers: {
+                        'Content-Type':
+                            'application/json'
+                    }
+                });
+        let txt = await response.text();
+        let res = JSON.parse(txt);
+        if (res.error.length > 0) {
+            return "API Error: " + res.error;
+        }
+        else {
+            return "Product has been added";
+        }
+    }
+    catch (error: any) {
+        return error.toString();
+    }
+};
+
+// TODO: Package products in IProduct interface
+export async function searchProduct(query: string): Promise<{products: IProduct[], error: string}> {
+    let obj = { search: query };
+    let js = JSON.stringify(obj);
+    try {
+        const response = await
+            fetch(server + 'searchProducts',
+                {
+                    method: 'POST', body: js, headers: {
+                        'Content-Type':
+                            'application/json'
+                    }
+                });
+        let txt = await response.text();
+        let raw = JSON.parse(txt).results;
+        let products : IProduct[] = [];
+        for(let i = 0; i < raw.length; i++)
+        {
+            let cur = raw[i];
+            products.push({id: cur.ID, name: cur.Product, price: 0, image: " "});
+        }
+        
+        return { products: products, error: ''};
+        // setResults('Product(s) have been retrieved');
+        // setProductList(resultText);
+    }
+    catch (error: any) {
+        return { products: [], error: ''};
+        // alert(error.toString());
+        // setResults(error.toString());
+    }
+};

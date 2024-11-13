@@ -1,16 +1,19 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import { MongoClient, ObjectId} from 'mongodb';
+import dotenv from 'dotenv';
+dotenv.config();
 const app = express();
 
-require('dotenv').config();
+
 const MONGODB_URI = process.env.MONGODB_URI;
-const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(MONGODB_URI);
 client.connect();
 
+
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,6 +28,9 @@ app.use((req, res, next) => {
     next();
 });
 
+// ----------------- danger zone --------------------------------------------------------------------
+// We need to figure out some way to make sure only validated users
+// can add or delete products. Everyday users should NOT have access to these
 app.post('/api/addProduct', async (req, res, next) => {
 
     const { product } = req.body;
@@ -32,10 +38,9 @@ app.post('/api/addProduct', async (req, res, next) => {
     var error = '';
     try {
         const db = client.db();
-        const result = db.collection('products').insertOne(newProduct);
+        await db.collection('products').insertOne(newProduct);
     }
-    catch(e)
-    {
+    catch(e) {
         error = e.toString();
         console.log(error);
     }
@@ -43,19 +48,40 @@ app.post('/api/addProduct', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
+app.post('/api/deleteProduct', async (req, res, next) => {
+    const { productId } = req.body;
+    console.log("Attempting to delete item with id " + productId);
+    let response = '';
+    try {
+        const db = client.db();
+        response = await db.collection('products').deleteOne({_id: ObjectId.createFromHexString(productId)});
+    }
+    catch(e) {
+        response = e.toString();
+        console.log(e);
+    }
+    res.status(200).json({response: response});
+});
+
+// ----------------------------------------------------------------------------------------------------
+
 app.post('/api/searchProducts', async (req, res, next) => {
     // incoming: userId, search
     // outgoing: results[], error
     var error = '';
+
     const { search } = req.body;
     var _search = search.trim();
+
     const db = client.db();
-    const results = await db.collection('products').find({ "Product": { $regex: _search + '.*' } }).toArray();
-    var _ret = [];
-    for (var i = 0; i < results.length; i++) {
-        _ret.push({ID: results[i]._id, Product: results[i].Product});
+    const rawResults = await db.collection('products').find({ "Product": { $regex: _search + '.*' } }).toArray();
+
+    var results = [];
+    for (var i = 0; i < rawResults.length; i++) {
+        results.push({ID: rawResults[i]._id, Product: rawResults[i].Product});
     }
-    var ret = { results: _ret, error: error };
+
+    var ret = { results: results, error: error };
     res.status(200).json(ret);
 });
 
