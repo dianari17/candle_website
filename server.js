@@ -50,7 +50,6 @@ app.post('/api/addProduct', async (req, res, next) => {
 
 app.post('/api/deleteProduct', async (req, res, next) => {
     const { productId } = req.body;
-    console.log("Attempting to delete item with id " + productId);
     let response = '';
     try {
         const db = client.db();
@@ -74,12 +73,12 @@ app.post('/api/searchProducts', async (req, res, next) => {
     const db = client.db();
     const rawResults = await db.collection('products').find({ "Product": { $regex: _search + '.*' } }).toArray();
 
-    var results = [];
-    for (var i = 0; i < rawResults.length; i++) {
-        results.push({ID: rawResults[i]._id, Product: rawResults[i].Product});
-    }
+    // var results = [];
+    // for (var i = 0; i < rawResults.length; i++) {
+    //     results.push({ID: rawResults[i]._id, Product: rawResults[i].Product});
+    // }
 
-    var ret = { results: results, error: error };
+    var ret = { results: rawResults, error: error };
     res.status(200).json(ret);
 });
 
@@ -97,7 +96,6 @@ app.post('/api/addToCart', async (req, res, next) => {
     // In future, use product's id
     const productObj = await db.collection('products').findOne({ _id: ObjectId.createFromHexString(productId)});
 
-    console.log(productObj);
     if(!productObj)
     {
         error = 'Product not found.';
@@ -110,6 +108,25 @@ app.post('/api/addToCart', async (req, res, next) => {
         );
     }
     res.status(200).json({error: error});
+});
+
+app.post('/api/removeFromCart', async (req, res, next) => {
+    var error = '';
+    const { userId, productId } = req.body;
+
+    try {
+        const db = client.db();
+    
+        db.collection('users').updateOne(
+            { "UserID": { $regex: userId + '.*'}},
+            { $pull: { "Cart": {id: ObjectId.createFromHexString(productId) }}}
+        );
+    }
+    catch(e) {
+        error = e.toString();
+    }
+    
+    res.status(200).json({error: error})
 });
 
 // TODO: Swap UserID string field for _id
@@ -130,9 +147,9 @@ app.post('/api/getCart', async (req, res, next) => {
         error = e.toString();
         console.log(error);
     }
-    console.log(products.length);
     res.status(200).json({products: products, error: error});
-})
+});
+
 
 // -----------------------------------------------------------------------------
 

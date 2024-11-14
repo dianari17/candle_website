@@ -10,16 +10,16 @@ function TestUI() {
     const [addResult, setAddResult] = React.useState('');
     const [product, setProductName] = React.useState('');
 
-    const testProducts : IProduct[] = [
-        { id: "-0", name: "Vacuum Cleaner", price: 19.99, image: "Imagine it" },
-        { id: "-1", name: "Broom", price: 20.00, image: "Imagine this, too"},
-        { id: "test", name: "Toothbrush", price: 30.00, image: "toothbruhs imge" }
-    ];
+    // const testProducts : IProduct[] = [
+    //     { id: "-0", name: "Vacuum Cleaner", price: 19.99, image: "Imagine it" },
+    //     { id: "-1", name: "Broom", price: 20.00, image: "Imagine this, too"},
+    //     { id: "test", name: "Toothbrush", price: 30.00, image: "toothbruhs imge" }
+    // ];
 
 
     const [search, setSearchValue] = React.useState('');
     const [searchResults, setResults] = React.useState('');
-    const [products, setProducts] = React.useState<IProduct[]>(testProducts);
+    const [products, setProducts] = React.useState<IProduct[]>(/*testProducts*/[]);
 
     const [cart, setCart] = React.useState<IProduct[]>([]);
 

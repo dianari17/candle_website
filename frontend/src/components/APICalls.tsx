@@ -49,7 +49,7 @@ export async function deleteProduct(productId: string) : Promise<string> {
         return error.toString();
     }
 
-}
+};
 
 export async function addToCart(userId: string, productId: string): Promise<string> {
 
@@ -78,6 +78,33 @@ export async function addToCart(userId: string, productId: string): Promise<stri
     }
 };
 
+export async function removeFromCart(userId: string, productId: string): Promise<string> {
+    let payload = JSON.stringify({userId: userId, productId: productId });
+
+    console.log("Sending to APi with " + userId + " and " + productId);
+    try {
+        const response = await
+            fetch(server + 'removeFromCart',
+                {
+                    method: 'POST', body: payload, headers: {
+                        'Content-Type':
+                            'application/json'
+                    }
+                });
+        let txt = await response.text();
+        let res = JSON.parse(txt);
+        if (res.error.length > 0) {
+            return "API Error: " + res.error;
+        }
+        else {
+            return "Product has been removed";
+        }
+    }
+    catch (error: any) {
+        return error.toString();
+    }
+}
+
 export async function getCart(userId: string): Promise<{products: IProduct[], error: string}> {
     let payload = JSON.stringify({userId: userId});
 
@@ -97,7 +124,7 @@ export async function getCart(userId: string): Promise<{products: IProduct[], er
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
-            products.push({id: cur.ID, name: cur.Product, price: 0, image: " "});
+            products.push({id: cur._id, name: cur.Product, price: 0, image: " "});
         }
         
         return { products: products, error: ''};
@@ -126,7 +153,7 @@ export async function searchProduct(query: string): Promise<{products: IProduct[
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
-            products.push({id: cur.ID, name: cur.Product, price: 0, image: " "});
+            products.push({id: cur._id, name: cur.Product, price: 0, image: " "});
         }
         
         return { products: products, error: ''};

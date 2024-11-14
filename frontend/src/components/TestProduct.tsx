@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { IProduct } from './IProduct'
 
-import {deleteProduct, addToCart } from './APICalls';
+import {deleteProduct, addToCart, removeFromCart } from './APICalls';
 
 async function onDelete(e: any, productId: string) {
     e.preventDefault();
@@ -17,6 +17,13 @@ async function onAddToCart(e: any, productId: string) {
     console.log(response);
 }
 
+async function onRemoveFromCart(e: any, productId: string) {
+    e.preventDefault();
+
+    let response = await removeFromCart("1", productId);
+    console.log(response);
+}
+
 function TestProduct({id, name, price, image}: IProduct) {
     return (
         <div>
@@ -25,6 +32,7 @@ function TestProduct({id, name, price, image}: IProduct) {
             <p>Image link: {image}</p>
             <button onClick={(e: any) => onAddToCart(e, id)}>Add to cart</button>
             <button onClick={(e: any) => onDelete(e, id)}>Delete product</button>
+            <button onClick={(e: any) => onRemoveFromCart(e, id)}>Remove from Cart</button>
         </div>
     );
 }
