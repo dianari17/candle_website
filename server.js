@@ -31,6 +31,9 @@ app.use((req, res, next) => {
 // ----------------- danger zone --------------------------------------------------------------------
 // We need to figure out some way to make sure only validated users
 // can add or delete products. Everyday users should NOT have access to these
+//
+// Solved by making seperate accounts for admins and customers
+// Need to eventually update existing API to handle the seperate accounts
 app.post('/api/addProduct', async (req, res, next) => {
 
     const { product } = req.body;
@@ -153,6 +156,51 @@ app.post('/api/getCart', async (req, res, next) => {
 
 // -----------------------------------------------------------------------------
 
+//Account related API
+//Very WIP
+
+/*
+//Admins can manage products
+
+app.post('/api/adminAccountCreate', async (req, res, next) => {
+    //incoming: login, password, firstName, lastName
+    //outgoing: error
+
+    var error = '';
+    const {login, password, firstName, lastName} = req.body;
+    const newAdmin = {Login:login , Password:password, FirstName:firstName, LastName:lastName, AdminID:adminID}; 
+    //I don't know how to do the incremental IDs with mongoDB
+
+    try {
+        const db = client.db();
+        db.collection('Admins').insertOne(newAdmin);
+    }
+    catch(e) {
+        error = e.toString();
+    }
+}
+
+
+//Normal users use the shopping cart, can not manage products
+
+app.post('/api/userAccountCreate', async (req, res, next) => {
+    //incoming: login, password, firstName, lastName
+    //outgoing: error
+
+    var error = '';
+    const {login, password, firstName, lastName} = req.body;
+    const newUser = {Login:login , Password:password, FirstName:firstName, LastName:lastName, UserID:userID}; 
+    //I don't know how to do the incremental IDs with mongoDB
+
+    try {
+        const db = client.db();
+        db.collection('Users').insertOne(newUser);
+    }
+    catch(e) {
+        error = e.toString();
+    }
+}
+*/
 
 // app.post('/api/login', async (req, res, next) => {
 //     // incoming: login, password
