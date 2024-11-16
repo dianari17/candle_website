@@ -3,6 +3,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { MongoClient, ObjectId} from 'mongodb';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+
 dotenv.config();
 const app = express();
 
@@ -36,7 +39,11 @@ app.use((req, res, next) => {
 // Need to eventually update existing API to handle the seperate accounts
 app.post('/api/addProduct', async (req, res, next) => {
 
-    const { product } = req.body;
+    const { product, token } = req.body;
+
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Verified payload:', verified);
+
     const newProduct = { Product: product };
     var error = '';
     try {
@@ -153,79 +160,75 @@ app.post('/api/getCart', async (req, res, next) => {
     res.status(200).json({products: products, error: error});
 });
 
+app.post('/api/register', async (req, res) => {
+    const {username, password, email} = req.body;
 
-// -----------------------------------------------------------------------------
+    try { 
+        const db = client.db();
+        let user = await db.collection('users').findOne({Email: email});
+        if(user)
+        {
+            return res.status(400).json({error: 'Email already registered'});
+        }
 
-//Account related API
-//Very WIP
+        user = {username, password};
 
-/*
-//Admins can manage products
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
 
-app.post('/api/adminAccountCreate', async (req, res, next) => {
-    //incoming: login, password, firstName, lastName
-    //outgoing: error
+        const payload = {
+            user: {
+                id: user._id
+            }
+        };
 
-    var error = '';
-    const {login, password, firstName, lastName} = req.body;
-    const newAdmin = {Login:login , Password:password, FirstName:firstName, LastName:lastName, AdminID:adminID}; 
-    //I don't know how to do the incremental IDs with mongoDB
+        await db.collection('users').insertOne({Username: username, Password: hash});
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600}, 
+            (err, token) => {
+                if(err) throw err;
+                res.status(200).json({token: token, error: ''});
+            }
+        );
+    }
+    catch(err) {
+        console.log(err.toString());
+        res.status(500).json({error: 'Server error'});
+    }
+});
 
+app.post('/api/login', async (req, res) => {
+    const {username, password} = req.body;
     try {
         const db = client.db();
-        db.collection('Admins').insertOne(newAdmin);
+        let user = await db.collection('users').findOne({Username: username});
+        if(!user) {
+            console.log("invalid username.");
+            return res.status(400).json({error: "Invalid username or password."});
+        }
+
+        const isMatch = await bcrypt.compare(password, user.Password);
+        if(!isMatch) {
+            console.log("invalid password");
+            return res.status(400).json({error: "Invalid username or password."});
+        }
+
+        const payload = {
+            user: {
+                id: user._id
+            }
+        };
+
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600}, 
+            (err, token) => {
+                if(err) throw err;
+                res.status(200).json({token: token, error: ''});
+            }
+        );
     }
     catch(e) {
-        error = e.toString();
+        console.log(e.toString());
+        res.status(500).json({error: "Server Error"});
     }
-}
-
-
-//Normal users use the shopping cart, can not manage products
-
-app.post('/api/userAccountCreate', async (req, res, next) => {
-    //incoming: login, password, firstName, lastName
-    //outgoing: error
-
-    var error = '';
-    const {login, password, firstName, lastName} = req.body;
-    const newUser = {Login:login , Password:password, FirstName:firstName, LastName:lastName, UserID:userID}; 
-    //I don't know how to do the incremental IDs with mongoDB
-
-    try {
-        const db = client.db();
-        db.collection('Users').insertOne(newUser);
-    }
-    catch(e) {
-        error = e.toString();
-    }
-}
-*/
-
-// app.post('/api/login', async (req, res, next) => {
-//     // incoming: login, password
-//     // outgoing: id, firstName, lastName, error
-//     var error = '';
-//     const { login, password } = req.body;
-
-//     console.log("Received " + login + " and " + password);
-//     const db = client.db();
-//     const test = await db.collection('users').countDocuments();
-//     console.log(test);
-//     const results = await db.collection('users').find({ Login: login, Password: password }).toArray();
-//     var id = -1;
-//     var fn = '';
-//     var ln = '';
-//     console.log("Received " + results.length + " results");
-//     if (results.length > 0) {
-//         id = results[0].UserId;
-//         fn = results[0].FirstName;
-//         ln = results[0].LastName;
-//     }
-//     var ret = { id: id, firstName: fn, lastName: ln, error: '' };
-//     res.status(200).json(ret);
-// });
-
-
+});
 
 app.listen(5000);

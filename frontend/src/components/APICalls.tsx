@@ -4,7 +4,7 @@ const server = 'http://localhost:5000/api/'
 
 // TODO: Use IProduct for this
 export async function addProduct(product : string): Promise<string> {
-    let obj = { product: product };
+    let obj = { product: product, token: localStorage.getItem('token') };
     let js = JSON.stringify(obj);
     try {
         const response = await
@@ -162,3 +162,57 @@ export async function searchProduct(query: string): Promise<{products: IProduct[
         return { products: [], error: ''};
     }
 };
+
+export async function login(username: string, password: string) : Promise<{result: boolean, error: string}> {
+    try {
+        let obj = { username: username, password: password };
+        let js = JSON.stringify(obj);
+        const response = await fetch(server + 'login',   {
+                method: 'POST', body: js, headers: 
+                {
+                    'Content-Type': 'application/json'
+                }
+            });
+        let txt = await response.text();
+        let jsRes = JSON.parse(txt);
+        console.log(txt);
+        if(jsRes.error == '')
+        {
+                localStorage.setItem('token', jsRes.token);
+                return { result: true, error: '' };
+        } 
+        else {
+            return { result: false, error: jsRes.error };
+        }
+    }
+    catch(e: any) {
+        return { result: false, error: e.toString() };        
+    }
+}
+
+export async function register(username: string, password: string) : Promise<{result: boolean, error: string}> {
+    try {
+        let obj = { username: username, password: password };
+        let js = JSON.stringify(obj);
+        const response = await fetch(server + 'register',   {
+                method: 'POST', body: js, headers: 
+                {
+                    'Content-Type': 'application/json'
+                }
+            });
+        let txt = await response.text();
+        let jsRes = JSON.parse(txt);
+        console.log(txt);
+        if(jsRes.error == '')
+        {
+            localStorage.setItem('token', jsRes.token);
+            return { result: true, error: '' };
+        } 
+        else {
+            return { result: false, error: jsRes.error };
+        }
+    }
+    catch(e: any) {
+        return { result: false, error: e.toString() };        
+    }
+}

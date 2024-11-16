@@ -1,9 +1,11 @@
 import TestUI from '../components/TestUI';
-const CardPage = () => {
+import TestLogin from '../components/TestLogin';
+const TestPage = () => {
     return (
         <div>
             <TestUI />
+            <TestLogin />
         </div>
     );
 }
-export default CardPage;
+export default TestPage;
