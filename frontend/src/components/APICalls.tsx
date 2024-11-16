@@ -29,7 +29,7 @@ export async function addProduct(product : string): Promise<string> {
 };
 
 export async function deleteProduct(productId: string) : Promise<string> {
-    let payload = JSON.stringify({ productId: productId });
+    let payload = JSON.stringify({ productId: productId, token: localStorage.getItem('token') });
     try {
         const response = await
             fetch(server + 'deleteProduct', {
@@ -38,22 +38,22 @@ export async function deleteProduct(productId: string) : Promise<string> {
                 }
             });
         let res = JSON.parse(await response.text());
-        if(res.response.length > 0) {
-            return "API Error: " + res.response;
+        if(res.error.length > 0) {
+            return "API Error: " + res.error;
         }
         else {
             return res.response;
         }
     }
     catch(error: any) {
-        return error.toString();
+        return "Local error: " + error.toString();
     }
 
 };
 
-export async function addToCart(userId: string, productId: string): Promise<string> {
+export async function addToCart(productId: string): Promise<string> {
 
-    let payload = JSON.stringify({ userId: userId, productId: productId, amount: "1" });
+    let payload = JSON.stringify({ productId: productId, amount: "1", token: localStorage.getItem('token') });
 
     try {
         const response = await
@@ -78,10 +78,9 @@ export async function addToCart(userId: string, productId: string): Promise<stri
     }
 };
 
-export async function removeFromCart(userId: string, productId: string): Promise<string> {
-    let payload = JSON.stringify({userId: userId, productId: productId });
+export async function removeFromCart(productId: string): Promise<string> {
+    let payload = JSON.stringify({ productId: productId, token: localStorage.getItem('token') });
 
-    console.log("Sending to APi with " + userId + " and " + productId);
     try {
         const response = await
             fetch(server + 'removeFromCart',
@@ -105,8 +104,8 @@ export async function removeFromCart(userId: string, productId: string): Promise
     }
 }
 
-export async function getCart(userId: string): Promise<{products: IProduct[], error: string}> {
-    let payload = JSON.stringify({userId: userId});
+export async function getCart(): Promise<{products: IProduct[], error: string}> {
+    let payload = JSON.stringify({ token: localStorage.getItem('token')});
 
     try {
         const response = await
@@ -118,9 +117,13 @@ export async function getCart(userId: string): Promise<{products: IProduct[], er
                     }
                 });
         let txt = await response.text();
-        let raw = JSON.parse(txt).products;
+        let json = JSON.parse(txt);
+        if(json.error != '') {
+            console.error(json.error);
+            return { products: [], error: ''};
+        }
+        let raw = json.products;
         let products : IProduct[] = [];
-        console.log(raw.length);
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
@@ -163,9 +166,9 @@ export async function searchProduct(query: string): Promise<{products: IProduct[
     }
 };
 
-export async function login(username: string, password: string) : Promise<{result: boolean, error: string}> {
+export async function login(email: string, password: string) : Promise<{result: boolean, error: string}> {
     try {
-        let obj = { username: username, password: password };
+        let obj = { email: email, password: password };
         let js = JSON.stringify(obj);
         const response = await fetch(server + 'login',   {
                 method: 'POST', body: js, headers: 
@@ -190,9 +193,9 @@ export async function login(username: string, password: string) : Promise<{resul
     }
 }
 
-export async function register(username: string, password: string) : Promise<{result: boolean, error: string}> {
+export async function register(firstname: string, lastname: string, email: string, password: string) : Promise<{result: boolean, error: string}> {
     try {
-        let obj = { username: username, password: password };
+        let obj = { firstname: firstname, lastname: lastname, email: email, password: password };
         let js = JSON.stringify(obj);
         const response = await fetch(server + 'register',   {
                 method: 'POST', body: js, headers: 
@@ -216,3 +219,31 @@ export async function register(username: string, password: string) : Promise<{re
         return { result: false, error: e.toString() };        
     }
 }
+
+export async function registerAdmin(firstname: string, lastname: string, email: string, password: string) : Promise<{result: boolean, error: string}> {
+    try {
+        let obj = { firstname: firstname, lastname: lastname, email: email, password: password, token: localStorage.getItem('token') };
+        let js = JSON.stringify(obj);
+        const response = await fetch(server + 'registerAdmin',   {
+                method: 'POST', body: js, headers: 
+                {
+                    'Content-Type': 'application/json'
+                }
+            });
+        let txt = await response.text();
+        let jsRes = JSON.parse(txt);
+        console.log(txt);
+        if(jsRes.error == '')
+        {
+            localStorage.setItem('token', jsRes.token);
+            return { result: true, error: '' };
+        } 
+        else {
+            return { result: false, error: jsRes.error };
+        }
+    }
+    catch(e: any) {
+        return { result: false, error: e.toString() };        
+    }
+}
+

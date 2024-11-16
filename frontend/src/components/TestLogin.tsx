@@ -5,11 +5,11 @@ import {login, register} from './APICalls';
 
 
 function TestLogin() {
-    const [formData, setFormData] = useState({username: '', password: ''});
+    const [formData, setFormData] = useState({firstname: '', lastname: '', email: '', password: ''});
     const [message, setMessage] = useState('');
     const [loggedInUser, setLoggedInUser] = useState('');
 
-    const {username, password} = formData;
+    const {firstname, lastname, email, password} = formData;
 
     function onChange(e: any) {
         setFormData({...formData, [e.target.name]: e.target.value});
@@ -18,11 +18,11 @@ function TestLogin() {
 
     async function onSubmitLogin(e: any) {
         e.preventDefault();
-        let res = await login(username, password);
+        let res = await login(email, password);
         if(res.result == true)
         {
             setMessage('Logged in successfully.');
-            setLoggedInUser(username);
+            setLoggedInUser(email);
         }
         else
         {
@@ -33,11 +33,11 @@ function TestLogin() {
 
     async function onSubmitRegister(e: any) {
         e.preventDefault();
-        let res = await register(username, password);
+        let res = await register(firstname, lastname, email, password);
         if(res.result == true)
         {
             setMessage('Registered successfully');
-            setLoggedInUser(username);
+            setLoggedInUser(email);
         }
         else
         {
@@ -56,9 +56,21 @@ function TestLogin() {
             <h2>Login</h2>
             <form>
                 <input type="text" 
-                       placeholder="Username" 
-                       name="username" 
-                       value={username} 
+                       placeholder="Firstname" 
+                       name="firstname" 
+                       value={firstname} 
+                       onChange={onChange} 
+                       required />
+                <input type="text" 
+                       placeholder="Lastname" 
+                       name="lastname" 
+                       value={lastname} 
+                       onChange={onChange} 
+                       required />
+                <input type="text" 
+                       placeholder="Email" 
+                       name="email" 
+                       value={email} 
                        onChange={onChange} 
                        required />
                 <input type="password" 

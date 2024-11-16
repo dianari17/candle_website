@@ -13,14 +13,14 @@ async function onDelete(e: any, productId: string) {
 async function onAddToCart(e: any, productId: string) {
     e.preventDefault();
 
-    let response = await addToCart("1", productId);
+    let response = await addToCart(productId);
     console.log(response);
 }
 
 async function onRemoveFromCart(e: any, productId: string) {
     e.preventDefault();
 
-    let response = await removeFromCart("1", productId);
+    let response = await removeFromCart(productId);
     console.log(response);
 }
 

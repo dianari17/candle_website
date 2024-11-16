@@ -54,7 +54,7 @@ function TestUI() {
 
     async function updateCart(e: any) {
         e.preventDefault();
-        let res = await getCart("1");
+        let res = await getCart();
         if(res.error)
         {
             console.error(res.error);

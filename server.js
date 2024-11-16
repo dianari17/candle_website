@@ -31,18 +31,36 @@ app.use((req, res, next) => {
     next();
 });
 
-// ----------------- danger zone --------------------------------------------------------------------
-// We need to figure out some way to make sure only validated users
-// can add or delete products. Everyday users should NOT have access to these
-//
-// Solved by making seperate accounts for admins and customers
-// Need to eventually update existing API to handle the seperate accounts
+// Returns true if the token specifies an admin user
+async function isAdmin(token) {
+    try {
+        const adminId = jwt.verify(token, process.env.JWT_SECRET).user.id;
+        let db = client.db();
+        let admin = await db.collection('users').findOne({_id: ObjectId.createFromHexString(adminId)});
+        return admin != null && admin.Role == 'admin';
+    }
+    catch(e) {
+        console.log(e.toString());
+        return false;
+    }
+}
+function getID(token) {
+    try {
+        console.log(jwt.decode(token));
+        return jwt.verify(token, process.env.JWT_SECRET).user.id;
+    }
+    catch {
+        return false;
+    }
+}
+
 app.post('/api/addProduct', async (req, res, next) => {
 
     const { product, token } = req.body;
 
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Verified payload:', verified);
+    if(await isAdmin(token) == false) {
+        return res.status(403).json({error: 'Insufficient permissions.'});
+    }
 
     const newProduct = { Product: product };
     var error = '';
@@ -59,7 +77,12 @@ app.post('/api/addProduct', async (req, res, next) => {
 });
 
 app.post('/api/deleteProduct', async (req, res, next) => {
-    const { productId } = req.body;
+    const { productId, token } = req.body;
+
+    if(await isAdmin(token) == false) {
+        return res.status(403).json({error: 'Insufficient permissions.'});
+    }
+
     let response = '';
     try {
         const db = client.db();
@@ -69,10 +92,12 @@ app.post('/api/deleteProduct', async (req, res, next) => {
         response = e.toString();
         console.log(e);
     }
-    res.status(200).json({response: response});
+    res.status(200).json({response: response, error: ''});
 });
 
 // ----------------------------------------------------------------------------------------------------
+
+
 
 app.post('/api/searchProducts', async (req, res, next) => {
     var error = '';
@@ -92,15 +117,17 @@ app.post('/api/searchProducts', async (req, res, next) => {
     res.status(200).json(ret);
 });
 
-// ------------------------------------------------ semi danger zone -----------------
-// Need a way to verify a user is who they say they are
 
-// TODO: Swap UserID string field for _id
 app.post('/api/addToCart', async (req, res, next) => {
     var error = '';
 
-    const { userId, productId, amount } = req.body;
+    const { productId, amount, token } = req.body;
 
+    const userId = getID(token);
+    if(!userId) {
+        res.status(200).json({error: "Invalid token." });
+        return;
+    }
     const db = client.db();
 
     // In future, use product's id
@@ -113,7 +140,7 @@ app.post('/api/addToCart', async (req, res, next) => {
     else
     {
         db.collection('users').updateOne(
-            {"UserID": { $regex: userId + '.*'}},                        // User to update
+            {_id: ObjectId.createFromHexString(userId)},                        // User to update
             { $push: { "Cart": { id: productObj._id, amount: amount } }}    // Add to cart
         );
     }
@@ -122,13 +149,14 @@ app.post('/api/addToCart', async (req, res, next) => {
 
 app.post('/api/removeFromCart', async (req, res, next) => {
     var error = '';
-    const { userId, productId } = req.body;
+    const { productId, token } = req.body;
+    const userId = getID(token);
 
     try {
         const db = client.db();
     
         db.collection('users').updateOne(
-            { "UserID": { $regex: userId + '.*'}},
+            { _id: userId},
             { $pull: { "Cart": {id: ObjectId.createFromHexString(productId) }}}
         );
     }
@@ -139,15 +167,23 @@ app.post('/api/removeFromCart', async (req, res, next) => {
     res.status(200).json({error: error})
 });
 
-// TODO: Swap UserID string field for _id
 app.post('/api/getCart', async (req, res, next) => {
     var error = '';
     var products = [];
-    const { userId } = req.body;
+    const { token } = req.body;
+    const userId = getID(token);
+    if(!userId) {
+        res.status(200).json({error: "Invalid token."});
+        return;
+    }
 
     try{
         const db = client.db();
-        const user = await db.collection('users').findOne({"UserID": userId});
+        const user = await db.collection('users').findOne({_id: ObjectId.createFromHexString(userId)});
+        if(!user) {
+            res.status(200).json({error: "Invalid user."});
+            return;
+        }
         const cart = user.Cart;
 
         const ids = cart.map(item => item.id);
@@ -161,7 +197,7 @@ app.post('/api/getCart', async (req, res, next) => {
 });
 
 app.post('/api/register', async (req, res) => {
-    const {username, password, email} = req.body;
+    const {firstname, lastname, password, email} = req.body;
 
     try { 
         const db = client.db();
@@ -171,18 +207,17 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({error: 'Email already registered'});
         }
 
-        user = {username, password};
-
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
 
+        
+
+        user = await db.collection('users').insertOne({FirstName: firstname, Cart: [], LastName: lastname, Email: email, Password: hash, Role: 'user'});
         const payload = {
             user: {
                 id: user._id
             }
         };
-
-        await db.collection('users').insertOne({Username: username, Password: hash});
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600}, 
             (err, token) => {
                 if(err) throw err;
@@ -196,11 +231,41 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+app.post('/api/registerAdmin', async (req, res) => {
+    const {firstname, lastname, password, email, token} = req.body;
+
+    try { 
+        const db = client.db();
+
+        if(await isAdmin(token) == false) {
+            return res.status(403).json({error: 'Insufficient permissions.'});
+        }
+
+        let user = await db.collection('users').findOne({Email: email});
+        if(user)
+        {
+            return res.status(400).json({error: 'Email already registered'});
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+
+        await db.collection('users').insertOne(
+            {FirstName: firstname, LastName: lastname, Email: email, 
+            Password: hash, Cart: [], Role: 'admin'});
+    }
+    catch(err) {
+        console.log(err.toString());
+        res.status(500).json({error: 'Server error'});
+    }
+});
+
+
 app.post('/api/login', async (req, res) => {
-    const {username, password} = req.body;
+    const {email, password} = req.body;
     try {
         const db = client.db();
-        let user = await db.collection('users').findOne({Username: username});
+        let user = await db.collection('users').findOne({Email: email});
         if(!user) {
             console.log("invalid username.");
             return res.status(400).json({error: "Invalid username or password."});
