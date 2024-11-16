@@ -51,9 +51,9 @@ export async function deleteProduct(productId: string) : Promise<string> {
 
 };
 
-export async function addToCart(productId: string): Promise<string> {
+export async function addToCart(productId: string, amount: number): Promise<string> {
 
-    let payload = JSON.stringify({ productId: productId, amount: "1", token: localStorage.getItem('token') });
+    let payload = JSON.stringify({ productId: productId, amount: amount, token: localStorage.getItem('token') });
 
     try {
         const response = await
@@ -71,6 +71,32 @@ export async function addToCart(productId: string): Promise<string> {
         }
         else {
             return "Product has been added";
+        }
+    }
+    catch (error: any) {
+        return error.toString();
+    }
+};
+
+export async function updateCartAmount(productId: string, amount: number) : Promise<string> {
+    let payload = JSON.stringify({ productId: productId, amount: amount, token: localStorage.getItem('token') });
+
+    try {
+        const response = await
+            fetch(server + 'updateCartAmount',
+                {
+                    method: 'POST', body: payload, headers: {
+                        'Content-Type':
+                            'application/json'
+                    }
+                });
+        let txt = await response.text();
+        let res = JSON.parse(txt);
+        if (res.error.length > 0) {
+            return "API Error: " + res.error;
+        }
+        else {
+            return "Product has been updated";
         }
     }
     catch (error: any) {
@@ -103,6 +129,7 @@ export async function removeFromCart(productId: string): Promise<string> {
         return error.toString();
     }
 }
+
 
 export async function getCart(): Promise<{products: IProduct[], error: string}> {
     let payload = JSON.stringify({ token: localStorage.getItem('token')});

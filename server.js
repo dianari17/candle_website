@@ -154,6 +154,32 @@ app.post('/api/addToCart', async (req, res, next) => {
     res.status(200).json({error: error});
 });
 
+app.post('/api/updateCartAmount', async(req, res, next) => {
+    var error = '';
+    const { productId, amount, token } = req.body;
+
+    // Ensure the sender is allowed to edit the cart
+    const userId = getID(token);
+    if(!userId) {
+        res.status(200).json({error: "Invalid token." });
+        return;
+    }
+
+    try {
+        const db = client.db();
+        
+        // Modify cart amount
+        let response = await db.collection('users').updateOne(
+            {_id: ObjectId.createFromHexString(userId), "Cart.id": ObjectId.createFromHexString(productId)}, 
+            {$set: { "Cart.$.amount": amount }
+        });
+    }
+    catch(e) {
+        error = e.toString();        
+    }
+    res.status(200).json({error: error});
+});
+
 app.post('/api/removeFromCart', async (req, res, next) => {
     var error = '';
     const { productId, token } = req.body;
@@ -170,7 +196,7 @@ app.post('/api/removeFromCart', async (req, res, next) => {
     
         // Remove from cart
         db.collection('users').updateOne(
-            { _id: userId},
+            { _id: ObjectId.createFromHexString(userId)},
             { $pull: { "Cart": {id: ObjectId.createFromHexString(productId) }}}
         );
     }
