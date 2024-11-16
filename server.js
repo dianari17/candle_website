@@ -46,7 +46,6 @@ async function isAdmin(token) {
 }
 function getID(token) {
     try {
-        console.log(jwt.decode(token));
         return jwt.verify(token, process.env.JWT_SECRET).user.id;
     }
     catch {
@@ -58,6 +57,7 @@ app.post('/api/addProduct', async (req, res, next) => {
 
     const { product, token } = req.body;
 
+    // Verify permissions. Only an admin should be able to edit product list
     if(await isAdmin(token) == false) {
         return res.status(403).json({error: 'Insufficient permissions.'});
     }
@@ -65,10 +65,12 @@ app.post('/api/addProduct', async (req, res, next) => {
     const newProduct = { Product: product };
     var error = '';
     try {
+        // Add product
         const db = client.db();
         await db.collection('products').insertOne(newProduct);
     }
     catch(e) {
+        // Something went wrong
         error = e.toString();
         console.log(error);
     }
@@ -79,16 +81,19 @@ app.post('/api/addProduct', async (req, res, next) => {
 app.post('/api/deleteProduct', async (req, res, next) => {
     const { productId, token } = req.body;
 
+    // Verify permissions. Only an admin should be able to edit product list
     if(await isAdmin(token) == false) {
         return res.status(403).json({error: 'Insufficient permissions.'});
     }
 
     let response = '';
     try {
+        // Delete product
         const db = client.db();
         response = await db.collection('products').deleteOne({_id: ObjectId.createFromHexString(productId)});
     }
     catch(e) {
+        // Something went wrong
         response = e.toString();
         console.log(e);
     }
@@ -123,6 +128,7 @@ app.post('/api/addToCart', async (req, res, next) => {
 
     const { productId, amount, token } = req.body;
 
+    // Ensure the sender is allowed to edit the cart
     const userId = getID(token);
     if(!userId) {
         res.status(200).json({error: "Invalid token." });
@@ -130,7 +136,7 @@ app.post('/api/addToCart', async (req, res, next) => {
     }
     const db = client.db();
 
-    // In future, use product's id
+    // Get the product to add
     const productObj = await db.collection('products').findOne({ _id: ObjectId.createFromHexString(productId)});
 
     if(!productObj)
@@ -139,8 +145,9 @@ app.post('/api/addToCart', async (req, res, next) => {
     }
     else
     {
+        // Add the product to the cart
         db.collection('users').updateOne(
-            {_id: ObjectId.createFromHexString(userId)},                        // User to update
+            {_id: ObjectId.createFromHexString(userId)},                    // User to update
             { $push: { "Cart": { id: productObj._id, amount: amount } }}    // Add to cart
         );
     }
@@ -150,11 +157,18 @@ app.post('/api/addToCart', async (req, res, next) => {
 app.post('/api/removeFromCart', async (req, res, next) => {
     var error = '';
     const { productId, token } = req.body;
+
+    // Ensure the sender is allowed to edit the cart
     const userId = getID(token);
+    if(!userId) {
+        res.status(200).json({error: "Invalid token." });
+        return;
+    }
 
     try {
         const db = client.db();
     
+        // Remove from cart
         db.collection('users').updateOne(
             { _id: userId},
             { $pull: { "Cart": {id: ObjectId.createFromHexString(productId) }}}
@@ -171,6 +185,8 @@ app.post('/api/getCart', async (req, res, next) => {
     var error = '';
     var products = [];
     const { token } = req.body;
+
+    // Ensure the sender is allowed to view the cart
     const userId = getID(token);
     if(!userId) {
         res.status(200).json({error: "Invalid token."});
@@ -178,6 +194,7 @@ app.post('/api/getCart', async (req, res, next) => {
     }
 
     try{
+        // Get user's cart
         const db = client.db();
         const user = await db.collection('users').findOne({_id: ObjectId.createFromHexString(userId)});
         if(!user) {
@@ -186,6 +203,7 @@ app.post('/api/getCart', async (req, res, next) => {
         }
         const cart = user.Cart;
 
+        // Find the items in the cart
         const ids = cart.map(item => item.id);
         products = await db.collection('products').find({_id: { $in: ids }}).toArray();
     }
@@ -200,6 +218,7 @@ app.post('/api/register', async (req, res) => {
     const {firstname, lastname, password, email} = req.body;
 
     try { 
+        // Ensure user doesn't already exist
         const db = client.db();
         let user = await db.collection('users').findOne({Email: email});
         if(user)
@@ -207,17 +226,19 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({error: 'Email already registered'});
         }
 
+        // Hash password to store in database
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
 
-        
-
+        // Add to database
         user = await db.collection('users').insertOne({FirstName: firstname, Cart: [], LastName: lastname, Email: email, Password: hash, Role: 'user'});
         const payload = {
             user: {
                 id: user._id
             }
         };
+
+        // Return token so user can authenticate later
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600}, 
             (err, token) => {
                 if(err) throw err;
@@ -237,19 +258,23 @@ app.post('/api/registerAdmin', async (req, res) => {
     try { 
         const db = client.db();
 
+        // Check for permissions. Only an admin can create other admins
         if(await isAdmin(token) == false) {
             return res.status(403).json({error: 'Insufficient permissions.'});
         }
 
+        // Ensure user doesn't already exist
         let user = await db.collection('users').findOne({Email: email});
         if(user)
         {
             return res.status(400).json({error: 'Email already registered'});
         }
 
+        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
 
+        // Create new user
         await db.collection('users').insertOne(
             {FirstName: firstname, LastName: lastname, Email: email, 
             Password: hash, Cart: [], Role: 'admin'});
@@ -265,12 +290,15 @@ app.post('/api/login', async (req, res) => {
     const {email, password} = req.body;
     try {
         const db = client.db();
+
+        // Check if that user exists
         let user = await db.collection('users').findOne({Email: email});
         if(!user) {
             console.log("invalid username.");
             return res.status(400).json({error: "Invalid username or password."});
         }
 
+        // Check if the hash matches
         const isMatch = await bcrypt.compare(password, user.Password);
         if(!isMatch) {
             console.log("invalid password");
@@ -283,6 +311,7 @@ app.post('/api/login', async (req, res) => {
             }
         };
 
+        // Send token so user can authenticate later
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600}, 
             (err, token) => {
                 if(err) throw err;
