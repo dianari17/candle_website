@@ -30,10 +30,11 @@ async function updateCart(e: any, productId: string) {
     console.log(response);
 }
 
-function TestProduct({id, name, price, image}: IProduct) {
+function TestProduct({id, name, description, price, image}: IProduct) {
     return (
         <div>
             <p>Product Name: {name}</p>
+            <p>Description: {description}</p>
             <p>Price: {price}</p>
             <p>Image link: {image}</p>
             <button onClick={(e: any) => onAddToCart(e, id)}>Add to cart</button>
