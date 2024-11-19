@@ -25,7 +25,7 @@ function TestUI() {
 
     async function onAdd(e: any) {
         e.preventDefault();
-        setAddResult(await addProduct(product));
+        setAddResult(await addProduct(product, "Default description"));
     }
 
     

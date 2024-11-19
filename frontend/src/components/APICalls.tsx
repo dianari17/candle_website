@@ -3,8 +3,8 @@ import {IProduct} from './IProduct'
 const server = 'http://localhost:5000/api/'
 
 // TODO: Use IProduct for this
-export async function addProduct(product : string): Promise<string> {
-    let obj = { product: product, token: localStorage.getItem('token') };
+export async function addProduct(product : string, description: string): Promise<string> {
+    let obj = { product: product, description: description, token: localStorage.getItem('token') };
     let js = JSON.stringify(obj);
     try {
         const response = await
@@ -154,7 +154,7 @@ export async function getCart(): Promise<{products: IProduct[], error: string}> 
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
-            products.push({id: cur._id, name: cur.Product, description: cur.description ,price: 0, image: " "});
+            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: " "});
         }
         
         return { products: products, error: ''};
@@ -183,7 +183,7 @@ export async function searchProduct(query: string): Promise<{products: IProduct[
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
-            products.push({id: cur._id, name: cur.Product, description : cur.description, price: 0, image: " "});
+            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: " "});
         }
         
         return { products: products, error: ''};
