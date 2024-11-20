@@ -25,7 +25,13 @@ function TestUI() {
 
     async function onAdd(e: any) {
         e.preventDefault();
-        setAddResult(await addProduct(product, "Default description"));
+        
+        const image = document.querySelector<HTMLInputElement>('#productImage')?.files?.[0];
+        if(!image) {
+            console.error("No image file uploaded.");
+            return;
+        }
+        setAddResult(await addProduct(product, "Default description", image));
     }
 
     
@@ -93,8 +99,9 @@ function TestUI() {
             </div>
 
 
-            Add: <input type="text" id="productText" placeholder="Product To Add"
+            Product Name: <input type="text" id="productText" placeholder="Product To Add"
                 onChange={handleProductTextChange} />
+            Image: <input type="file" id="productImage" />
             <button type="button" id="addProductButton" className="buttons"
                 onClick={onAdd}> Add Product </button><br />
             <span id="productAddResult">{addResult}</span>

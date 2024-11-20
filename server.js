@@ -5,6 +5,7 @@ import { MongoClient, ObjectId} from 'mongodb';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import multer from 'multer';
 
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 const client = new MongoClient(MONGODB_URI);
 client.connect();
 
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors());
 app.use(express.json());
@@ -53,16 +55,22 @@ function getID(token) {
     }
 }
 
-app.post('/api/addProduct', async (req, res, next) => {
+app.post('/api/addProduct', upload.single('productImage'), async (req, res, next) => {
 
-    const { product, token } = req.body;
+    const { product, description, token } = req.body;
+
+    console.log("Uploaded file:", req.file);
+    console.log("Buffer: ", req.file.buffer);
 
     // Verify permissions. Only an admin should be able to edit product list
     if(await isAdmin(token) == false) {
         return res.status(403).json({error: 'Insufficient permissions.'});
     }
+    if(!req.file) {
+        return res.status(400).json({error: 'Product image is required.'});
+    }
 
-    const newProduct = { Product: product };
+    const newProduct = { Product: product, Description: description, Image: { data: Buffer.from(req.file.buffer), contentType: req.file.mimetype, }};
     var error = '';
     try {
         // Add product
@@ -72,11 +80,30 @@ app.post('/api/addProduct', async (req, res, next) => {
     catch(e) {
         // Something went wrong
         error = e.toString();
-        console.log(error);
+        console.error("Error adding product: " + error);
     }
     var ret = {error: error};
     res.status(200).json(ret);
 });
+
+app.get('/api/productImage/:id', async (req, res) => {
+    const {id} = req.params;
+    const db = client.db();
+    console.log("Getting ", id);
+    try {
+        const product = await db.collection('products').findOne({_id: ObjectId.createFromHexString(id)});
+        if(!product || !product.Image) {
+            console.error("No image found for id.");
+            return res.status(404).json({error: 'Image not found'});
+        }
+        res.set('Content-Type', product.Image.contentType);
+        res.status(200).json({contentType: product.Image.contentType, data: product.Image.data.toString('base64')});
+    }
+    catch (e) {
+        console.error("Error fetching image: " + e);
+        res.status(500).json({ error: e.toString() });
+    }
+})
 
 app.post('/api/deleteProduct', async (req, res, next) => {
     const { productId, token } = req.body;
@@ -99,10 +126,6 @@ app.post('/api/deleteProduct', async (req, res, next) => {
     }
     res.status(200).json({response: response, error: ''});
 });
-
-// ----------------------------------------------------------------------------------------------------
-
-
 
 app.post('/api/searchProducts', async (req, res, next) => {
     var error = '';
@@ -158,7 +181,7 @@ app.post('/api/updateCartAmount', async(req, res, next) => {
     var error = '';
     const { productId, amount, token } = req.body;
 
-    // Ensure the sender is allowed to edit the cart
+    // Ensure only the sender is allowed to edit the cart
     const userId = getID(token);
     if(!userId) {
         res.status(200).json({error: "Invalid token." });
@@ -184,7 +207,7 @@ app.post('/api/removeFromCart', async (req, res, next) => {
     var error = '';
     const { productId, token } = req.body;
 
-    // Ensure the sender is allowed to edit the cart
+    // Ensure only the sender is allowed to edit the cart
     const userId = getID(token);
     if(!userId) {
         res.status(200).json({error: "Invalid token." });
@@ -212,7 +235,7 @@ app.post('/api/getCart', async (req, res, next) => {
     var products = [];
     const { token } = req.body;
 
-    // Ensure the sender is allowed to view the cart
+    // Ensure only the sender is allowed to view the cart
     const userId = getID(token);
     if(!userId) {
         res.status(200).json({error: "Invalid token."});

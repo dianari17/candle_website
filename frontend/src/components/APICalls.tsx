@@ -3,16 +3,19 @@ import {IProduct} from './IProduct'
 const server = 'http://localhost:5000/api/'
 
 // TODO: Use IProduct for this
-export async function addProduct(product : string, description: string): Promise<string> {
-    let obj = { product: product, description: description, token: localStorage.getItem('token') };
-    let js = JSON.stringify(obj);
+export async function addProduct(product : string, description: string, image: File) : Promise<string> {
+    // Use form data to handle image transfer
+    const formData = new FormData();
+    
+    formData.append('product', product);
+    formData.append('description', description);
+    formData.append('productImage', image);
+    formData.append('token', localStorage.getItem('token') || '');
+
     try {
         const response = await
             fetch(server + 'addProduct', {
-                    method: 'POST', body: js, headers: {
-                        'Content-Type':
-                            'application/json'
-                    }
+                    method: 'POST', body: formData,
                 });
         let txt = await response.text();
         let res = JSON.parse(txt);
@@ -154,7 +157,7 @@ export async function getCart(): Promise<{products: IProduct[], error: string}> 
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
-            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: " "});
+            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: cur.Image });
         }
         
         return { products: products, error: ''};
@@ -183,7 +186,7 @@ export async function searchProduct(query: string): Promise<{products: IProduct[
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
-            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: " "});
+            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: cur.Image});
         }
         
         return { products: products, error: ''};
