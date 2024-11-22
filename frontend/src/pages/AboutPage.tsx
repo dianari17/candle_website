@@ -1,20 +1,12 @@
-import * as React from 'react';
-import './App.css';
+import React from 'react';
 
-import logo from './logo.svg'
+const AboutPage = () => {
+  return (
+    <div>
+      <h1>This is the About Page</h1>
+    </div>
+  );
+};
 
-class App extends React.Component {
-    public render(){
-    return(
-        <div className="App">
-        <header className='App-header'>
-            <img src={logo} className="App-logo" alt="logo"/>
-            <h1 className="App-title">ABOUT PAGE</h1>
-            </header>
-            </div>
-        );
-    }
-}
+export default AboutPage;
 
-
-export default App;

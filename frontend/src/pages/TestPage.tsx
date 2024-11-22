@@ -1,10 +1,12 @@
 import TestUI from '../components/TestUI';
-import TestLogin from '../components/TestLogin';
+import TestBut from '../components/TestBut.tsx'
 const TestPage = () => {
     return (
         <div>
             <TestUI />
-            <TestLogin />
+            
+            <TestBut/>
+            
         </div>
     );
 }
