@@ -12,7 +12,7 @@ const navigate = useNavigate();
     navigate('../pages/AboutPage.tsx')
 }
 function moveLog(){
-    navigate('../components/TestLogin.tsx')
+    navigate('../pages/Login.tsx')
 }
 function moveSign(){
     navigate('../pages/Signup.tsx')
@@ -98,19 +98,21 @@ return(
 
             <div
                 style={{
-                    backgroundImage: `url('/frame.svg')`, // Path to your SVG file
+                    backgroundImage: `url('/frame.svg')`, 
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     width: '100%',
-                    height: '100vh', // Full viewport height
+                    height: '100vh', 
                     position: 'absolute',
                     top: '0',
                     left: '0',
-                    zIndex: '-1', // Ensure it stays behind all content
+                    zIndex: '-1', 
                 }}
-            ></div>
 
+                
+            ></div>
+            
         </div>
 
     );

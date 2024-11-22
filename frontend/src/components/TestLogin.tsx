@@ -15,7 +15,7 @@ function TestLogin() {
         setFormData({...formData, [e.target.name]: e.target.value});
     }
 
-s
+
     async function onSubmitLogin(e: any) {
         e.preventDefault();
         let res = await login(email, password);
