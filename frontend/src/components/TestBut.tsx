@@ -4,7 +4,6 @@ import {useNavigate} from 'react-router-dom'
 
 function TestBut(){
 
-
     
 
 const navigate = useNavigate();
@@ -13,7 +12,7 @@ const navigate = useNavigate();
     navigate('../pages/AboutPage.tsx')
 }
 function moveLog(){
-    navigate('../pages/Login.tsx')
+    navigate('../components/TestLogin.tsx')
 }
 function moveSign(){
     navigate('../pages/Signup.tsx')
@@ -94,8 +93,26 @@ return(
             >
                 Shopping Cart
             </button>
-           
+            
+
+
+            <div
+                style={{
+                    backgroundImage: `url('/frame.svg')`, // Path to your SVG file
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    width: '100%',
+                    height: '100vh', // Full viewport height
+                    position: 'absolute',
+                    top: '0',
+                    left: '0',
+                    zIndex: '-1', // Ensure it stays behind all content
+                }}
+            ></div>
+
         </div>
+
     );
 
 

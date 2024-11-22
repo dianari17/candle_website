@@ -1,7 +1,8 @@
 
 import TestLogin from '../components/TestLogin';
 
-const TestPage = () => {
+const Login = () => {
+
     return (
 
         <div>
@@ -9,4 +10,4 @@ const TestPage = () => {
         </div>
     );
 }
-export default TestPage;
+export default Login;
