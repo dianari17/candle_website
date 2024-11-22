@@ -46,7 +46,7 @@ function TestUI() {
 
     async function onSearch(e: any) {
         e.preventDefault();
-        let res : {products: IProduct[], error: string } = await searchProduct(search);
+        let res : {products: IProduct[], error: string } = await searchProduct(search, 2, 3);
         if(res.error)
         {
             setResults(res.error);

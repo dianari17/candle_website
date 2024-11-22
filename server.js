@@ -89,7 +89,6 @@ app.post('/api/addProduct', upload.single('productImage'), async (req, res, next
 app.get('/api/productImage/:id', async (req, res) => {
     const {id} = req.params;
     const db = client.db();
-    console.log("Getting ", id);
     try {
         const product = await db.collection('products').findOne({_id: ObjectId.createFromHexString(id)});
         if(!product || !product.Image) {
@@ -129,19 +128,28 @@ app.post('/api/deleteProduct', async (req, res, next) => {
 
 app.post('/api/searchProducts', async (req, res, next) => {
     var error = '';
+    var products = [];
+    var numPages = 0;
+    try {
+        const { searchInput, productsPerPage, pageNum } = req.body;
 
-    const { search } = req.body;
-    var _search = search.trim();
-
-    const db = client.db();
-    const rawResults = await db.collection('products').find({ "Product": { $regex: _search + '.*' } }).toArray();
-
-    // var results = [];
-    // for (var i = 0; i < rawResults.length; i++) {
-    //     results.push({ID: rawResults[i]._id, Product: rawResults[i].Product});
-    // }
-
-    var ret = { results: rawResults, error: error };
+        const limit = parseInt(productsPerPage) || 10; // Default limit of 10 products per page
+        const page = parseInt(pageNum) || 1; // Default limit of first page.
+        const skip = (page - 1) * limit;
+    
+        var search = searchInput.trim();
+    
+        const db = client.db();
+        products = await db.collection('products').find({ "Product": { $regex: search + '.*' } }).skip(skip).limit(limit).toArray();
+        const totalCount = await db.collection('products').countDocuments({ "Product": { $regex: search + '.*' } });
+        numPages = Math.ceil(totalCount / productsPerPage);
+    }
+    catch(e) {
+        error = e.toString();
+        console.error(e);
+    }
+    
+    var ret = { products: products, numPages: numPages, error: error };
     res.status(200).json(ret);
 });
 
@@ -373,5 +381,7 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({error: "Server Error"});
     }
 });
+
+
 
 app.listen(5000);
