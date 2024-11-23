@@ -1,8 +1,9 @@
 import React from 'react';
-
+import TestBut from '../components/TestBut';
 const AboutPage = () => {
   return (
-    
+    <div>
+    <TestBut/>
     <div
     style={{
         backgroundImage: `url('/frame.svg')`, 
@@ -19,6 +20,7 @@ const AboutPage = () => {
 
     
 ></div>
+</div>
   );
 };
 

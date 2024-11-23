@@ -4,22 +4,19 @@ import {useNavigate} from 'react-router-dom'
 
 function TestBut(){
 
-    
-
-    
 const navigate = useNavigate();
 
  function moveAbt(){
-    navigate('../pages/AboutPage.tsx')
+    navigate('/about')
 }
 function moveLog(){
-    navigate('../pages/Login.tsx')
+    navigate('/login')
 }
 function moveSign(){
-    navigate('../pages/Signup.tsx')
+    navigate('/signup')
 }
 function moveCart(){
-    navigate('../pages/CartPage.tsx')
+    navigate('/cart')
 }
 
 return(
@@ -98,9 +95,6 @@ return(
         </div>
 
     );
-
-
-
 }
 
 export default TestBut;
