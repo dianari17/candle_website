@@ -1,3 +1,5 @@
+
+import TestUI from '../components/TestUI';
 import TestBut from '../components/TestBut';
 
 const TestPage = () => {
@@ -20,6 +22,7 @@ const TestPage = () => {
 
                 
             ></div>
+            <TestUI />
         </div>
     );
 }
