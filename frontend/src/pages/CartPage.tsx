@@ -1,10 +1,12 @@
+import TestBut from '../components/TestBut';
 import TestUI from '../components/TestUI';
 
-const TestPage = () => {
+const CartPage = () => {
     return (
         <div>
+            <TestBut/>
             <TestUI />
         </div>
     );
 }
-export default TestPage;
+export default CartPage;

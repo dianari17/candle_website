@@ -1,12 +1,12 @@
 
+import TestBut from '../components/TestBut';
 import TestLogin from '../components/TestLogin';
 
 const Login = () => {
-
     return (
-
         <div>
-            <TestLogin />
+            <TestBut/>
+            <TestLogin/>
         </div>
     );
 }

@@ -1,5 +1,6 @@
+
 import TestUI from '../components/TestUI';
-import TestBut from '../components/TestBut.tsx'
+import TestBut from '../components/TestBut';
 
 const TestPage = () => {
     return (
@@ -22,8 +23,6 @@ const TestPage = () => {
                 
             ></div>
             <TestUI />
-       
-            
         </div>
     );
 }

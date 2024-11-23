@@ -168,8 +168,8 @@ export async function getCart(): Promise<{products: IProduct[], error: string}> 
     }
 }
 
-export async function searchProduct(query: string): Promise<{products: IProduct[], error: string}> {
-    let obj = { search: query };
+export async function searchProduct(query: string, pageNum: number, productsPerPage: number): Promise<{products: IProduct[], numPages: number, error: string}> {
+    let obj = { searchInput: query, productsPerPage: productsPerPage, pageNum: pageNum };
     let js = JSON.stringify(obj);
     try {
         const response = await
@@ -181,18 +181,20 @@ export async function searchProduct(query: string): Promise<{products: IProduct[
                     }
                 });
         let txt = await response.text();
-        let raw = JSON.parse(txt).results;
+        let rawProducts = JSON.parse(txt).products;
+        const numPages = JSON.parse(txt).numPages;
+
         let products : IProduct[] = [];
-        for(let i = 0; i < raw.length; i++)
+        for(let i = 0; i < rawProducts.length; i++)
         {
-            let cur = raw[i];
+            let cur = rawProducts[i];
             products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: cur.Image});
         }
         
-        return { products: products, error: ''};
+        return { products: products, numPages: numPages, error: ''};
     }
     catch (error: any) {
-        return { products: [], error: ''};
+        return { products: [], numPages: 1, error: ''};
     }
 };
 
