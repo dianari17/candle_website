@@ -10,8 +10,8 @@ import "../assets/Custom-Style-Sheets/Login.css";
 const SignUpPage = () => {
   const navigate = useNavigate();
 
-  function moveHome() {
-    navigate("/");
+  function movelogin() {
+    navigate("/login");
   }
 
   return (
@@ -34,7 +34,7 @@ const SignUpPage = () => {
         <img src={FormDecor2} />
       </div>
       <div className="BackButton">
-        <Button onClick={moveHome}>
+        <Button onClick={movelogin}>
           <ArrowBackIcon sx={{ height: "4rem", width: "3rem" }} />
         </Button>
       </div>
