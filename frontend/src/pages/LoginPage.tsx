@@ -5,6 +5,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import BrandLogo from "../assets/Custom-Assets/brandLogo";
 import FormDecor from "../assets/SVGs-Assets/FormDecor.svg";
+import Typography from "@mui/material/Typography";
 
 import "../assets/Custom-Style-Sheets/Login.css";
 
@@ -37,6 +38,7 @@ const LoginPage = () => {
       <div className="BackButton">
         <Button onClick={moveHome}>
           <ArrowBackIcon sx={{ height: "4rem", width: "3rem" }} />
+          <Typography sx={{ padding: "1rem" }}>Back to Homepage</Typography>
         </Button>
       </div>
     </div>
