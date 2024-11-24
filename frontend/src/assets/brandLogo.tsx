@@ -3,11 +3,13 @@ import React from "react";
 const BrandLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
   return (
     <svg
+      {...props} // Spread props to allow passing custom attributes
+      viewBox="0 0" // Optional: Set a default viewBox for scaling
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-      <rect width="270" height="152" fill="url(#pattern0_91_6846)" />
+      <rect width="100%" height="100%" fill="url(#pattern0_91_6846)" />
       <defs>
         <pattern
           id="pattern0_91_6846"

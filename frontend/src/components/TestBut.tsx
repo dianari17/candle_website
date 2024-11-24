@@ -46,8 +46,8 @@ return (
       <Grid item lg={2}>
         <BrandLogo
           style={{
-            height: "50px", // Adjust the height of the logo
-            width: "auto", // Maintain aspect ratio
+            height: "114px", // Adjust the height of the logo
+            width: "230px", // Maintain aspect ratio
           }}
         />
       </Grid>
