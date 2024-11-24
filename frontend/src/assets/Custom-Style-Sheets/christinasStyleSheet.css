@@ -1,3 +1,21 @@
+svg {
+  max-width: 1188px; /* Default width of the SVG */
+  width: 100%; /* Scales the SVG to fit smaller screens */
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  svg {
+    max-width: 90%; /* Shrink SVG on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  svg {
+    max-width: 80%; /* Further shrink on very small screens */
+  }
+}
+
 .BackButton {
   position: absolute;
   top: 10px;

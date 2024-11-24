@@ -1,153 +1,134 @@
 import React from "react";
 import "../assets/Custom-Style-Sheets/christinasStyleSheet.css";
 import BrandLogo from "../assets/Custom-Assets/brandLogo";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Box from "@mui/joy/Box";
 import Grid from "@mui/material/Grid";
 import AddToCart from "../assets/Custom-Assets/addToCartButton";
 
 function NavigationBar() {
   const navigate = useNavigate();
-  function moveHome() {
-    navigate("/");
-  }
+  const location = useLocation(); // Get the current route
 
-  function moveAbt() {
-    navigate("/about");
-  }
-  function moveLog() {
-    navigate("/login");
-  }
-  function moveSign() {
-    navigate("/signup");
-  }
-  function moveCart() {
-    navigate("/cart");
-  }
-  function moveProducts() {
-    navigate("/products");
-  }
+  const buttonStyle = (path: string) => ({
+    padding: "5px 10px",
+    fontSize: "2rem",
+    border: "none",
+    backgroundColor: "transparent",
+      color: path === "/" 
+    ? (location.pathname === path ? "#644934" : "#FFF") // Match exactly for "/"
+    : location.pathname.startsWith(path) ? "#644934" : "#FFF", // Match for other paths
+    // Changes color if on the page
+    cursor: "pointer",
+    textDecoration: location.pathname === path ? "underline" : "none", // Underline if active
+    transition: "color 0.3s ease", // Smooth hover and color transition
+  });
 
   return (
     <Box
       sx={{
-        backgroundColor: "#A48A79", // Light brown background
+        backgroundColor: "#A48A79",
         width: "100%",
-        padding: "15px 0 0 ",
-        position: "fixed", // Fixed at the top
+        padding: { xs: "10px 0", md: "15px 0" },
+        position: "fixed",
         top: "0",
         left: "0",
-        zIndex: "1000", // Ensure it stays above other content
-        textAlign: "center", // Center the text items
+        zIndex: "1000",
+        textAlign: "center",
+        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <Grid container spacing={12}>
-        <Grid item lg={2}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          alignItems: "center",
+          margin: "0 auto",
+        }}
+      >
+        <Grid
+          item
+          xs={12}
+          md={2}
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
           <BrandLogo
             style={{
-              height: "114px", // Adjust the height of the logo
-              width: "230px", // Maintain aspect ratio
+              height: "110px",
+              width: "auto",
             }}
           />
         </Grid>
-        <Grid item Lg={2}>
+        <Grid item xs={4} md={1}>
           <button
-            style={{
-              marginTop: "3rem",
-              padding: "10px 20px",
-              fontSize: "30px",
-              border: "none",
-              borderRadius: "5px",
-              backgroundColor: "#A48A79",
-              color: "#FFF",
-              cursor: "pointer",
+            style={buttonStyle("/")}
+            onClick={() => navigate("/")}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#644934")}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color =
+                location.pathname === "/" ? "#644934" : "#FFF";
             }}
-            onClick={moveHome}
           >
             Home
           </button>
         </Grid>
-
-        <Grid item Lg={2}>
+        <Grid item xs={4} md={1}>
           <button
-            style={{
-              marginTop: "3rem",
-              padding: "10px 20px",
-              fontSize: "30px",
-              border: "none",
-              borderRadius: "5px",
-              backgroundColor: "#A48A79",
-              color: "#FFF",
-              cursor: "pointer",
+            style={buttonStyle("/products")}
+            onClick={() => navigate("/products")}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#644934")}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color =
+                location.pathname === "/products" ? "#644934" : "#FFF";
             }}
-            onClick={moveProducts}
           >
             Products
           </button>
         </Grid>
-        <Grid item Lg={2}>
+        <Grid item xs={4} md={1}>
           <button
-            style={{
-              marginTop: "3rem",
-              padding: "10px 20px",
-              fontSize: "30px",
-              border: "none",
-              borderRadius: "5px",
-              backgroundColor: "#A48A79",
-              color: "#FFF",
-              cursor: "pointer",
+            style={buttonStyle("/about")}
+            onClick={() => navigate("/about")}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#644934")}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color =
+                location.pathname === "/about" ? "#644934" : "#FFF";
             }}
-            onClick={moveAbt}
           >
             About Us
           </button>
         </Grid>
-        <Grid item Lg={2}>
+        <Grid item xs={4} md={1}>
           <button
-            style={{
-              marginTop: "3rem",
-              padding: "10px 20px",
-              fontSize: "30px",
-              border: "none",
-              borderRadius: "5px",
-              backgroundColor: "#A48A79",
-              color: "#FFF",
-              cursor: "pointer",
+            style={buttonStyle("/login")}
+            onClick={() => navigate("/login")}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#644934")}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color =
+                location.pathname === "/login" ? "#644934" : "#FFF";
             }}
-            onClick={moveLog}
           >
-            Log In
+            Account
           </button>
         </Grid>
-        <Grid item Lg={2}>
+        <Grid
+          item
+          xs={4}
+          md={1}
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "center", md: "flex-end" },
+            ml: "30vw",
+          }}
+        >
           <button
-            style={{
-              marginTop: "3rem",
-              padding: "10px 20px",
-              fontSize: "30px",
-              border: "none",
-              borderRadius: "5px",
-              backgroundColor: "#A48A79",
-              color: "#FFF",
-              cursor: "pointer",
+            style={buttonStyle("/cart")}
+            onClick={() => navigate("/cart")}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#644934")}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color =
+                location.pathname === "/cart" ? "#644934" : "#FFF";
             }}
-            onClick={moveSign}
-          >
-            Sign Up
-          </button>
-        </Grid>
-        <Grid item Lg={2} sx={{ ml: "auto" }}>
-          <button
-            style={{
-              padding: "10px 20px",
-              fontSize: "30px",
-              border: "none",
-              borderRadius: "5px",
-              backgroundColor: "#A48A79",
-              color: "#FFF",
-              cursor: "pointer",
-            }}
-            onClick={moveCart}
           >
             <AddToCart />
           </button>

@@ -21,7 +21,9 @@ const AboutPage = () => {
           zIndex: "-1",
         }}
       ></div>
-      <AboutUs />
+      <div style={{marginTop:"10rem"}}>
+        <AboutUs />
+      </div>
     </div>
   );
 };

@@ -28,7 +28,7 @@ export default function ProductsPage() {
           zIndex: "-1",
         }}
       ></div>
-      <Box sx={{ flexGrow: 1, mt: "4rem", ml: "10rem" }}>
+      <Box sx={{ flexGrow: 1, mt: "9rem", ml: "15rem" }}>
         <Grid container spacing={4}>
           <Grid item lg={3}>
             <ProductCard />
@@ -56,7 +56,7 @@ export default function ProductsPage() {
           </Grid>
         </Grid>
       </Box>
-      <Stack spacing={2} justifySelf="center" sx={{ mt: "5rem" }}>
+      <Stack spacing={2} justifySelf="center" sx={{ mt: "5rem", mb:"3rem" }}>
         <Pagination
           count={10}
           renderItem={(item) => (
