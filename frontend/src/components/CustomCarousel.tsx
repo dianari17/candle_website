@@ -64,6 +64,7 @@ const CustomCarousel: React.FC = () => {
         style={{
           width: "1210px",
           height: "461px",
+
         }}
         arrows 
         prevArrow={<CustomLeftArrow />}

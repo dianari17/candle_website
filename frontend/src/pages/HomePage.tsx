@@ -15,13 +15,23 @@ const HomePage = () => {
           backgroundPosition: "center",
           width: "100%",
           height: "100vh",
-          position: "absolute",
+          position: "fixed",
           top: "0",
           left: "0",
           zIndex: "-1",
         }}
       ></div>
-      <CustomCarousel/>
+      <div
+              style={{
+          backgroundPosition: "center",
+          width: "100%",
+          height: "100vh",
+          position: "fixed",
+          top: "0",
+          left: "0",
+        }}>
+        <CustomCarousel />
+      </div>
     </div>
   );
 };
