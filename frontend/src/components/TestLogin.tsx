@@ -54,7 +54,28 @@ function TestLogin() {
     return (
         <div className="auth-form">
             <h2>Login</h2>
-            <form>
+            <button onClick={onSubmitLogout} 
+    style={{
+        position: 'absolute',
+        top: '10px', // Adjust for desired spacing from the top
+        right: '10px', // Adjust for desired spacing from the right
+        zIndex: '10', // Ensures it stays above other elements
+        backgroundColor: '#FFFF', // Button background color
+        color: 'Black', // Button text color
+        border: 'none', // Remove default border
+        borderRadius: '5px', // Rounded corners
+        cursor: 'pointer', // Changes cursor on hover
+    }}
+> Sign Up
+</button>
+ <form style={{
+    padding: '35px',
+    borderRadius: '20x',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    backgroundColor: '#FFFF'
+ }}>
                 <input type="text" 
                        placeholder="Firstname" 
                        name="firstname" 
@@ -79,10 +100,38 @@ function TestLogin() {
                        value={password} 
                        onChange={onChange} 
                        required />
-                <button onClick={onSubmitLogin}>Login</button>
-                <button onClick={onSubmitRegister}>Register</button>
-                <button onClick={onSubmitLogout}>Logout</button>
+                        <button onClick={onSubmitLogin}
+                
+                
+                style={{ backgroundColor: '#FFFF', // Button background color
+                    color: 'Black', // Button text color
+                    border: 'none', // Remove default border
+                    borderRadius: '5px', // Rounded corners
+                    cursor: 'pointer'
+                }}
+                
+                >Login</button>
+
+
+
+
+                <button onClick={onSubmitRegister}
+                
+                style={{backgroundColor: '#FFFF', // Button background color
+                    color: 'Black', // Button text color
+                    border: 'none', // Remove default border
+                    borderRadius: '5px', // Rounded corners
+                    cursor: 'pointer'}}
+                
+                
+                
+                
+                >Register</button>
+               
             </form>
+
+           
+            
             <p className="message">{message}</p>
             <p>Logged in as {loggedInUser}</p>
         </div>
