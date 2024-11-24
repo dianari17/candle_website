@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import "../assets/Custom-Style-Sheets/Login.css";
 import Box from "@mui/joy/Box";
 import Grid from "@mui/material/Grid";
+import TestUI from "../components/TestUI";
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const CartPage = () => {
           xs={1}
           md={12}
           lg={6}
-          sx={{ display: "flex", justifyContent: "center", marginLeft:"auto" }}
+          sx={{ display: "flex", justifyContent: "center", marginLeft: "auto" }}
         >
           <Typography
             level="h1"
@@ -77,6 +78,7 @@ const CartPage = () => {
           />
         </Grid>
       </Grid>
+      <TestUI />
     </Box>
   );
 };
