@@ -1,14 +1,14 @@
 import React from "react";
-import LoginForm from "../components/loginForm";
+import LoginForm from "../components/Form-Components/loginForm";
 import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import BrandLogo from "../assets/brandLogo";
-import FormDecor from "../assets/FormDecor.svg";
+import BrandLogo from "../assets/Custom-Assets/brandLogo";
+import FormDecor from "../assets/SVGs-Assets/FormDecor.svg";
 
-import "../assets/Login.css";
+import "../assets/Custom-Style-Sheets/Login.css";
 
-const Login = () => {
+const LoginPage = () => {
   const navigate = useNavigate();
 
   function moveHome() {
@@ -32,7 +32,7 @@ const Login = () => {
         <LoginForm />
       </div>
       <div className="background-svg">
-        <img src={FormDecor}/>
+        <img src={FormDecor} />
       </div>
       <div className="BackButton">
         <Button onClick={moveHome}>
@@ -43,4 +43,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

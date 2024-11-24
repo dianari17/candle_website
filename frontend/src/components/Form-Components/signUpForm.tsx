@@ -14,8 +14,7 @@ import MuiCard from "@mui/material/Card";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import ForgotPassword from "./forgotPassword";
-import { GoogleIcon, FacebookIcon } from "../assets/customIcons";
+import { GoogleIcon, FacebookIcon } from "./customIcons";
 import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -59,15 +58,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     if (emailError || passwordError) {

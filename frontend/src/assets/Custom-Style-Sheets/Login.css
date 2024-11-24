@@ -1,5 +1,5 @@
 .login-page {
-  background-image: url("./BackgroundText.svg");
+  background-image: url("../SVGs-Assets/BackgroundText.svg");
   background-repeat: repeat-y;
   background-size: 100% auto;
   background-color: #a48a79;
@@ -27,7 +27,7 @@
   pointer-events: none; 
 }
 
-.SignUp-page{  background-image: url("./BackgroundText.svg");
+.SignUp-page{  background-image: url("../SVGs-Assets/BackgroundText.svg");
   background-repeat: repeat-y;
   background-size: 100% auto;
   background-color: #644934;
