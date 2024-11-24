@@ -118,7 +118,8 @@ function NavigationBar() {
           sx={{
             display: "flex",
             justifyContent: { xs: "center", md: "flex-end" },
-            ml: "30vw",
+            ml: "auto",
+            mr:"2rem"
           }}
         >
           <button
