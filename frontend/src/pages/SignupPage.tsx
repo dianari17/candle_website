@@ -2,12 +2,12 @@ import React from "react";
 import { Button } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-import BrandLogo from "../assets/brandLogo";
-import FormDecor2 from "../assets/FormDecor2.svg";
-import SignUp from "../components/signUpForm";
-import "../assets/Login.css";
+import BrandLogo from "../assets/Custom-Assets/brandLogo";
+import FormDecor2 from "../assets/SVGs-Assets/FormDecor2.svg";
+import SignUp from "../components/Form-Components/signUpForm";
+import "../assets/Custom-Style-Sheets/Login.css";
 
-const Login = () => {
+const SignUpPage = () => {
   const navigate = useNavigate();
 
   function moveHome() {
@@ -28,7 +28,7 @@ const Login = () => {
         />
       </div>
       <div className="login-form">
-        <SignUp/>
+        <SignUp />
       </div>
       <div className="background-svg">
         <img src={FormDecor2} />
@@ -42,4 +42,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUpPage;

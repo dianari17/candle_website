@@ -1,10 +1,10 @@
 import TestUI from "../components/TestUI";
-import TestBut from "../components/TestBut";
+import NavigationBar from "../components/NavigationBar";
 
 const HomePage = () => {
   return (
     <div>
-      <TestBut />
+      <NavigationBar />
       <div
         style={{
           backgroundImage: `url('/frame.svg')`,

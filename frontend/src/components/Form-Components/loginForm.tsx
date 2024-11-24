@@ -15,10 +15,11 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import ForgotPassword from "./forgotPassword";
-import { GoogleIcon, FacebookIcon } from "../assets/customIcons";
+import { GoogleIcon, FacebookIcon } from "./customIcons";
 import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+
 
 const lightTheme = createTheme({
   palette: {

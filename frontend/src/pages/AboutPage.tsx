@@ -1,12 +1,11 @@
-import React from 'react';
-import "../assets/aboutUs";
-import TestBut from '../components/TestBut';
-import AboutUs from '../assets/aboutUs';
+import React from "react";
+import "../assets/Custom-Assets/aboutUs";
+import NavigationBar from "../components/NavigationBar";
+import AboutUs from "../assets/Custom-Assets/aboutUs";
 const AboutPage = () => {
   return (
-    <div
-    >
-      <TestBut />
+    <div>
+      <NavigationBar />
       <div
         style={{
           backgroundImage: `url('/frame.svg')`,
@@ -28,4 +27,3 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
-

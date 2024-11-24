@@ -1,12 +1,12 @@
-import TestBut from '../components/TestBut';
-import TestUI from '../components/TestUI';
+import NavigationBar from "../components/NavigationBar";
+import TestUI from "../components/TestUI";
 
 const CartPage = () => {
-    return (
-        <div>
-            <TestBut/>
-            <TestUI />
-        </div>
-    );
-}
+  return (
+    <div>
+      <NavigationBar />
+      <TestUI />
+    </div>
+  );
+};
 export default CartPage;
