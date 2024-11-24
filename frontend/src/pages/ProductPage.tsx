@@ -1,5 +1,6 @@
 import * as React from "react";
 import NavigationBar from "../components/NavigationBar";
+import Footer from "../components/Footer";
 import Stack from "@mui/joy/Stack";
 import Box from "@mui/joy/Box";
 import ProductCard from "../components/ProductCard";
@@ -70,6 +71,7 @@ export default function ProductsPage() {
           shape="rounded"
         />
       </Stack>
+      <Footer />
     </div>
   );
 }
