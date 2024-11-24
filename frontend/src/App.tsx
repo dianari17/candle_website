@@ -6,13 +6,13 @@ import AboutPage from './pages/AboutPage';
 import Login from './pages/Login';
 import CartPage from './pages/CartPage';
 import Signup from './pages/Signup';
-import ProductsPage from './pages/ProductPage'
-
+import ProductsPage from './pages/ProductPage';
+import HomePage from './pages/HomePage';
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<TestPage />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/Cart" element={<CartPage />} />
