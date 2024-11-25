@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { MongoClient, ObjectId} from 'mongodb';
-import dotenv from 'dotenv'; //note to self: need to integrate paypal stuff with .env
+import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import multer from 'multer';
@@ -10,8 +10,17 @@ import multer from 'multer';
 dotenv.config();
 const app = express();
 
+const{
+    DOMAINS,
+    PAYPAL_API_BASE_URL = "https://api-m.sandbox.paypal.com", // use https://api-m.paypal.com for production environment
+    PAYPAL_SDK_BASE_URL = "https://www.sandbox.paypal.com", // use https://www.paypal.com for production environment
+    PAYPAL_CLIENT_ID,
+    PAYPAL_CLIENT_SECRET,
+    MONGODB_URI,
+} = process.env;
 
-const MONGODB_URI = process.env.MONGODB_URI;
+
+//const MONGODB_URI = process.env.MONGODB_URI;
 const client = new MongoClient(MONGODB_URI);
 client.connect();
 
