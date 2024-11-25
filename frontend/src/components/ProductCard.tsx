@@ -9,9 +9,37 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import Modal from "@mui/joy/Modal";
 import Box from "@mui/joy/Box";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { IProduct } from './IProduct';
+import { addToCart } from "./APICalls";
 
-export default function ProductCard() {
+export default function ProductCard({id, name, description, price, ingredients, weight }: IProduct) {
   const [isModalOpen, setModalOpen] = React.useState(false);
+
+  const [imageSrc, setImageSrc] = React.useState<string | null>(null);
+  async function getImage() {
+    try { 
+        const response = await fetch('http://localhost:5000/api/productImage/' + id);
+        if(!response.ok) {
+            console.error("Failed to fetch image: " + response.statusText);
+            return;
+        }
+
+        const image = await response.json();
+        setImageSrc("data:" + image.contentType + ";base64, " + image.data);
+    }
+    catch(e: any) {
+        console.error(e.toString());
+    }
+  }
+  getImage();
+
+  async function onAddToCart(e: any, productId: string) {
+    e.preventDefault();
+
+    console.log(productId);
+    let response = await addToCart(productId, 1);
+    console.log(response);
+  }
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -25,7 +53,10 @@ export default function ProductCard() {
       <Card sx={{ width: 240, height: 434, top: "2rem" }}>
         <AspectRatio minHeight="240px" maxHeight="200px">
           <img
-            src="https://i.pinimg.com/736x/ac/95/7c/ac957c328e655d4f18d89c58017f3da2.jpg"
+            src=
+            {
+              imageSrc ? imageSrc : "https://i.pinimg.com/736x/ac/95/7c/ac957c328e655d4f18d89c58017f3da2.jpg"
+            }
             loading="lazy"
             alt="Product Image"
           />
@@ -36,7 +67,7 @@ export default function ProductCard() {
               level="title-md"
               sx={{ fontSize: "lg", fontWeight: "lg" }}
             >
-              Candle Name
+              {name}
             </Typography>
             <Typography
               sx={{
@@ -46,10 +77,10 @@ export default function ProductCard() {
                 marginRight: "6rem",
               }}
             >
-              $--
+              ${price}
             </Typography>
             <Typography level="body-sm" sx={{ margin: "1rem" }}>
-              Candle Description
+              {description}
             </Typography>
           </div>
         </CardContent>
@@ -61,6 +92,12 @@ export default function ProductCard() {
                 color: "white",
                 "&:hover": { backgroundColor: "darkgrey" },
               }}
+              onClick={
+                (e: any) => { 
+                  console.log("CLICK"); 
+                  onAddToCart(e, id);
+                }
+              }
             >
               <AddShoppingCartIcon />
             </Button>
@@ -71,8 +108,8 @@ export default function ProductCard() {
                 color: "white",
                 "&:hover": { backgroundColor: "darkgrey" },
               }}
-              onClick={handleOpenModal}
-            >
+              onClick={handleOpenModal}>
+
               <MoreHorizIcon />
             </Button>
           </div>
@@ -126,7 +163,10 @@ export default function ProductCard() {
             <img className="Image" />
             <img
               className="ProductImageModal"
-              src="https://i.pinimg.com/736x/ac/95/7c/ac957c328e655d4f18d89c58017f3da2.jpg"
+              src=
+              {
+                imageSrc ? imageSrc : "https://i.pinimg.com/736x/ac/95/7c/ac957c328e655d4f18d89c58017f3da2.jpg"
+              }
               style={{
                height:"300px",
                 position: "absolute",
@@ -145,7 +185,7 @@ export default function ProductCard() {
             component="h1"
             justifySelf="center"
           >
-            Candle Name
+            {name}
           </Typography>
           <Typography
             id="modal-description"
@@ -153,16 +193,16 @@ export default function ProductCard() {
             fontSize="1.5rem"
             sx={{ mt: 0 }}
           >
-            $--
+            ${price}
           </Typography>
           <Typography id="modal-description" justifySelf="start" sx={{ mt: 2 }}>
-            Candle Description:
+            Candle Description: {description}
           </Typography>
           <Typography id="modal-description" justifySelf="start" sx={{ mt: 2 }}>
-            Ingredients:
+            Ingredients: {ingredients}
           </Typography>
           <Typography id="modal-description" justifySelf="start" sx={{ mt: 2 }}>
-            Size:
+            Size: {weight} oz
           </Typography>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Button
@@ -171,6 +211,12 @@ export default function ProductCard() {
                 color: "white",
                 "&:hover": { backgroundColor: "darkgrey" },
               }}
+              onClick={
+                (e: any) => { 
+                  console.log("CLICK"); 
+                  onAddToCart(e, id);
+                }
+              }
             >
               <AddShoppingCartIcon />
             </Button>

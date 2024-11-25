@@ -157,7 +157,7 @@ export async function getCart(): Promise<{products: IProduct[], error: string}> 
         for(let i = 0; i < raw.length; i++)
         {
             let cur = raw[i];
-            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: cur.Image });
+            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, ingredients: cur.Ingredients, weight: cur.Weight});
         }
         
         return { products: products, error: ''};
@@ -188,12 +188,12 @@ export async function searchProduct(query: string, pageNum: number, productsPerP
         for(let i = 0; i < rawProducts.length; i++)
         {
             let cur = rawProducts[i];
-            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, image: cur.Image});
+            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, ingredients: cur.Ingredients, weight: cur.Weight});
         }
-        
         return { products: products, numPages: numPages, error: ''};
     }
     catch (error: any) {
+        console.error(error.toString());
         return { products: [], numPages: 1, error: ''};
     }
 };

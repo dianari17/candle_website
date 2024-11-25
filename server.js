@@ -57,7 +57,7 @@ function getID(token) {
 
 app.post('/api/addProduct', upload.single('productImage'), async (req, res, next) => {
 
-    const { product, description, token } = req.body;
+    const { product, description, token, ingredients, weight } = req.body;
 
     console.log("Uploaded file:", req.file);
     console.log("Buffer: ", req.file.buffer);
@@ -70,7 +70,14 @@ app.post('/api/addProduct', upload.single('productImage'), async (req, res, next
         return res.status(400).json({error: 'Product image is required.'});
     }
 
-    const newProduct = { Product: product, Description: description, Image: { data: Buffer.from(req.file.buffer), contentType: req.file.mimetype, }};
+    const newProduct = 
+    { 
+        Product: product, 
+        Description: description, 
+        Image: { data: Buffer.from(req.file.buffer), contentType: req.file.mimetype, },
+        Ingredients: ingredients,
+        Weight: weight,
+    };
     var error = '';
     try {
         // Add product
@@ -142,13 +149,13 @@ app.post('/api/searchProducts', async (req, res, next) => {
         const db = client.db();
         products = await db.collection('products').find({ "Product": { $regex: search + '.*' } }).skip(skip).limit(limit).toArray();
         const totalCount = await db.collection('products').countDocuments({ "Product": { $regex: search + '.*' } });
+
         numPages = Math.ceil(totalCount / productsPerPage);
     }
     catch(e) {
         error = e.toString();
         console.error(e);
     }
-    
     var ret = { products: products, numPages: numPages, error: error };
     res.status(200).json(ret);
 });

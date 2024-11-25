@@ -9,8 +9,29 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Grid from "@mui/material/Grid";
 import "../assets/Custom-Style-Sheets/christinasStyleSheet.css";
+import { IProduct } from '../components/IProduct';
+import { searchProduct } from "../components/APICalls";
 
 export default function ProductsPage() {
+  const [products, setProducts] = React.useState<IProduct[]>([]);
+  const [numPages, setNumPages] = React.useState<number>(0);
+
+  async function getProducts(search: string, pageNum: number) {
+    let res : {products: IProduct[], numPages: number, error: string } = await searchProduct(search, pageNum, 4);
+    
+    if(res.error)
+    {
+      console.error(res.error);
+    }
+    else
+    {
+      setProducts(res.products);
+      setNumPages(res.numPages);
+    }
+  }
+
+  React.useEffect(() => { getProducts('', 1) }, []);
+
   return (
     <div>
       <NavigationBar />
@@ -30,7 +51,14 @@ export default function ProductsPage() {
       ></div>
       <Box sx={{ flexGrow: 1, mt: "9rem", ml: "15rem" }}>
         <Grid container spacing={4}>
-          <Grid item lg={3}>
+          {
+            products.map((product, index) => {
+              return <Grid item lg={3} key={index}>
+                <ProductCard {...product}/>
+              </Grid>
+            })
+          }
+          {/* <Grid item lg={3}>
             <ProductCard />
           </Grid>
           <Grid item lg={3}>
@@ -53,12 +81,12 @@ export default function ProductsPage() {
           </Grid>
           <Grid item lg={3}>
             <ProductCard />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
       <Stack spacing={2} justifySelf="center" sx={{ mt: "5rem", mb:"3rem" }}>
         <Pagination
-          count={10}
+          count={numPages}
           renderItem={(item) => (
             <PaginationItem
               slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
