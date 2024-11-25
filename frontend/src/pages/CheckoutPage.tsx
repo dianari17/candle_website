@@ -17,29 +17,24 @@ const CheckoutPage = () => {
 
   // Function to navigate back to the products page
   const moveProducts = () => {
-    navigate("/products"); // Update the path to match your route for the products page
-  };
+    navigate("/products"); };
 
   return (
     <Box
       sx={{
-        backgroundColor: "#4B4B3B", // Matches the provided design
-        color: "#FFFFFF",
+        backgroundColor: "#4B4B3B", // Match the background
         width: "100vw",
         minHeight: "100vh",
         padding: "20px",
       }}
     >
-      {/* Back to Shopping Button */}
       <Button onClick={moveProducts} sx={{ display: "flex", alignItems: "center", color: "#FFFFFF" }}>
         <ArrowBackIcon sx={{ height: "4rem", width: "3rem" }} />
         <Typography sx={{ padding: "1rem" }}>Back to Shopping</Typography>
       </Button>
 
       <Grid container spacing={4}>
-        {/* Left Section */}
         <Grid item xs={12} md={8}>
-          {/* Account Section */}
           <Typography variant="h6" sx={{ marginBottom: "10px" }}>
             ACCOUNT
           </Typography>
@@ -55,7 +50,6 @@ const CheckoutPage = () => {
             <Button sx={{ color: "#FFFFFF" }}>Change</Button>
           </Box>
 
-          {/* Ship to Section */}
           <Typography variant="h6" sx={{ marginBottom: "10px" }}>
             Ship to
           </Typography>
@@ -74,7 +68,6 @@ const CheckoutPage = () => {
             <Button sx={{ color: "#FFFFFF" }}>Change</Button>
           </Box>
 
-          {/* Delivery Method */}
           <Typography variant="h6" sx={{ marginBottom: "10px" }}>
             Delivery Method
           </Typography>
@@ -93,7 +86,7 @@ const CheckoutPage = () => {
             </Select>
           </FormControl>
 
-          {/* Terms & PayPal Button */}
+          {/* Terms & PayPal Button ????*/}
           <Typography
             sx={{ fontSize: "0.9rem", color: "#CCC", marginTop: "20px" }}
           >
@@ -114,7 +107,6 @@ const CheckoutPage = () => {
           </Button>
         </Grid>
 
-        {/* Right Section */}
         <Grid item xs={12} md={4}>
           <Box
             sx={{
@@ -123,7 +115,6 @@ const CheckoutPage = () => {
               borderRadius: "10px",
             }}
           >
-            {/* Product Details */}
             <Box sx={{ display: "flex", marginBottom: "20px" }}>
               <img
                 src="https://via.placeholder.com/80"
@@ -136,7 +127,7 @@ const CheckoutPage = () => {
               </Box>
             </Box>
 
-            {/* Discount Code */}
+            {/* Discount Code was on the figma dont know if were implementing*/}
             <Box sx={{ display: "flex", marginBottom: "20px" }}>
               <TextField
                 fullWidth
@@ -155,7 +146,6 @@ const CheckoutPage = () => {
               </Button>
             </Box>
 
-            {/* Summary */}
             <Box sx={{ borderTop: "1px solid #FFFFFF", paddingTop: "20px" }}>
               <Box
                 sx={{
@@ -203,7 +193,6 @@ const CheckoutPage = () => {
         </Grid>
       </Grid>
 
-      {/* Footer Links */}
       <Box sx={{ marginTop: "20px", textAlign: "center" }}>
         <Typography variant="body2" sx={{ color: "#CCC", marginBottom: "5px" }}>
           <a

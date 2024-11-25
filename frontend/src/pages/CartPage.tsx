@@ -13,7 +13,6 @@ import "../assets/Custom-Style-Sheets/Login.css";
 const CartPage = () => {
   const navigate = useNavigate();
 
-  // State to track quantity
   const [quantity, setQuantity] = useState(1);
 
   function moveProducts() {
@@ -22,19 +21,17 @@ const CartPage = () => {
   function moveCheckout() {
     navigate("/checkout");
   }
-  // Function to handle increment
   const handleIncrement = () => {
     setQuantity((prevQuantity) => prevQuantity + 1);
   };
 
-  // Function to handle decrement
   const handleDecrement = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
 
   return (
     <Box className="Cart-page" sx={{ backgroundColor: "#C8A68A", minHeight: "100vh", padding: "20px" }}>
-      {/* Header Section */}
+      
       <Grid
         container
         spacing={2}
@@ -43,7 +40,6 @@ const CartPage = () => {
           margin: "0 auto",
         }}
       >
-        {/* Back to Shopping Button */}
         <Grid
           item
           xs={12}
@@ -58,7 +54,6 @@ const CartPage = () => {
           </Button>
         </Grid>
 
-        {/* Page Title */}
         <Grid
           item
           xs={1}
@@ -79,7 +74,6 @@ const CartPage = () => {
           </Typography>
         </Grid>
 
-        {/* Logo */}
         <Grid
           item
           xs={8}
@@ -99,9 +93,7 @@ const CartPage = () => {
         </Grid>
       </Grid>
 
-      {/* Shopping Cart Table */}
       <Box sx={{ marginTop: "30px", padding: "20px", backgroundColor: "#C8A68A", borderRadius: "10px" }}>
-        {/* Table Header */}
         <Grid
           container
           spacing={2}
@@ -127,7 +119,6 @@ const CartPage = () => {
           </Grid>
         </Grid>
 
-        {/* Product Row */}
         <Grid
           container
           spacing={2}
@@ -139,7 +130,6 @@ const CartPage = () => {
             color: "#FFFFFF",
           }}
         >
-          {/* Product Info */}
           <Grid item xs={6} sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <img
               src="https://via.placeholder.com/100" // Replace with your image
@@ -162,12 +152,10 @@ const CartPage = () => {
             </div>
           </Grid>
 
-          {/* Price */}
           <Grid item xs={2}>
             $12.00
           </Grid>
 
-          {/* Quantity Controls */}
           <Grid item xs={2}>
             <Box
               sx={{
@@ -187,14 +175,12 @@ const CartPage = () => {
             </Box>
           </Grid>
 
-          {/* Total */}
           <Grid item xs={2}>
             ${(12.00 * quantity).toFixed(2)}
           </Grid>
         </Grid>
       </Box>
 
-      {/* Subtotal and Checkout */}
       <Box
         sx={{
           marginTop: "20px",
