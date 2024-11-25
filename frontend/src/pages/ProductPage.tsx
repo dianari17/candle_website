@@ -92,6 +92,7 @@ export default function ProductsPage() {
               slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
               {...item}
               sx={{ backgroundColor: "white" }}
+              onClick={()=>item.page ? getProducts('', item.page) : ''}
             />
           )}
           variant="outlined"
