@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { MongoClient, ObjectId} from 'mongodb';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'; //note to self: need to integrate paypal stuff with .env
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import multer from 'multer';
@@ -54,6 +54,52 @@ function getID(token) {
         return false;
     }
 }
+
+//generate paypal's client token
+async function getClientToken() {
+
+    try {
+
+        if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+
+            throw new Error("Missing API credentials");
+
+        }
+
+        const url = `${PAYPAL_API_BASE_URL}/v1/oauth2/token`;
+        const headers = new Headers();
+
+        const auth = Buffer.from(
+
+            `${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`
+
+        ).toString("base64");
+
+        headers.append("Authorization", `Basic ${auth}`);
+        headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+        const searchParams = new URLSearchParams();
+        searchParams.append("grant_type", "client_credentials");
+        searchParams.append("response_type", "client_token");
+        searchParams.append("intent", "sdk_init");
+        searchParams.append("domains[]", DOMAINS);
+
+        const options = {
+
+            method: "POST",
+            headers,
+            body: searchParams,
+
+        };
+        const response = await fetch(url, options);
+        const data = await response.json();
+        return data.access_token;
+
+    } catch (error) {
+        console.error(error);
+        return "";
+    }
+} 
 
 app.post('/api/addProduct', upload.single('productImage'), async (req, res, next) => {
 
