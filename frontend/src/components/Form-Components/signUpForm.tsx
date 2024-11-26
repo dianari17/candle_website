@@ -18,6 +18,8 @@ import { GoogleIcon, FacebookIcon } from "./customIcons";
 import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { register } from "../APICalls";
+import { useNavigate } from "react-router-dom";
 
 const lightTheme = createTheme({
   palette: {
@@ -57,25 +59,63 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  const [firstnameError, setFirstnameError] = React.useState(false);
+  const [firstnameErrorMessage, setFirstnameErrorMessage] = React.useState("");
+  const [lastnameError, setLastnameError] = React.useState(false);
+  const [lastnameErrorMessage, setLastnameErrorMessage] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (emailError || passwordError) {
-      event.preventDefault();
       return;
     }
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    const email = data.get("email")?.toString();
+    const password = data.get("password")?.toString();
+    const firstname = data.get("firstname")?.toString();
+    const lastname = data.get("lastname")?.toString();
+
+    if(!email || !password || !firstname || !lastname) { return; }
+    const response = await register(firstname, lastname, email, password);
+    
+    if(!response.result)
+    {
+      setEmailError(true);
+      setEmailErrorMessage("Email is already registered!");
+      return;
+    }
+    navigate("/products");
   };
+  
 
   const validateInputs = () => {
     const email = document.getElementById("email") as HTMLInputElement;
     const password = document.getElementById("password") as HTMLInputElement;
+    const firstname = document.getElementById("firstname") as HTMLInputElement;
+    const lastname = document.getElementById("lastname") as HTMLInputElement;
 
     let isValid = true;
+
+    if(!firstname.value){
+      setFirstnameError(true);
+      setFirstnameErrorMessage("Please enter your first name.");
+      isValid = false;
+    } else {
+      setFirstnameError(false);
+      setFirstnameErrorMessage("");
+    }
+
+    if(!lastname.value){
+      setLastnameError(true);
+      setLastnameErrorMessage("Please enter your last name.");
+    } else {
+      setLastnameError(false);
+      setLastnameErrorMessage("");
+    }
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
@@ -127,6 +167,40 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
               textAlign: "left",
             }}
           >
+            <FormControl>
+              <FormLabel htmlFor="firstname">First Name</FormLabel>
+              <TextField
+                error={firstnameError}
+                helperText={firstnameErrorMessage}
+                id="firstname"
+                type="text"
+                name="firstname"
+                placeholder="First Name"
+                autoComplete="firstame"
+                autoFocus
+                required
+                fullWidth
+                variant="outlined"
+                color={emailError ? "error" : "primary"}
+              />
+              </FormControl>
+              <FormControl>
+              <FormLabel htmlFor="lastname">Last Name</FormLabel>
+              <TextField
+                error={lastnameError}
+                helperText={lastnameErrorMessage}
+                id="lastname"
+                type="text"
+                name="lastname"
+                placeholder="Last Name"
+                autoComplete="lastname"
+                autoFocus
+                required
+                fullWidth
+                variant="outlined"
+                color={emailError ? "error" : "primary"}
+              />
+            </FormControl>
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField

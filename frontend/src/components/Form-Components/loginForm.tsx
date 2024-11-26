@@ -19,7 +19,8 @@ import { GoogleIcon, FacebookIcon } from "./customIcons";
 import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
+import { login } from "../APICalls";
+import { useNavigate } from "react-router-dom";
 
 const lightTheme = createTheme({
   palette: {
@@ -62,6 +63,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [showPassword, setShowPassword] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
+  const navigate = useNavigate();
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -70,18 +73,30 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (emailError || passwordError) {
-      event.preventDefault();
       return;
     }
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
 
+    const email = data.get("email")?.toString();
+    const password = data.get("password")?.toString();
+
+    if(!email || !password) { return; }
+    const response = await login(email, password);
+    console.log(email, password);
+    if(!response.result)
+    {
+        setEmailError(true);
+        setEmailErrorMessage("Invald email or password.");
+        setPasswordError(true);
+        setPasswordErrorMessage("Invalid email or password.");
+        return;
+    }
+    navigate("/products");
+  };
+  
   const validateInputs = () => {
     const email = document.getElementById("email") as HTMLInputElement;
     const password = document.getElementById("password") as HTMLInputElement;
