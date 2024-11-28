@@ -1,4 +1,5 @@
 import React from 'react';
+import Fastlane from './checkout.tsx';
 
 interface FastlaneComponents {
     identity: any;
@@ -52,10 +53,10 @@ async function initFastlane() {
          * ######################################################################
          */
 
-        let memberAuthenticatedSuccessfully;
-        let email;
-        let shippingAddress;
-        let paymentToken;
+        let memberAuthenticatedSuccessfully: boolean | undefined;
+        let email: string | undefined;
+        let shippingAddress: string | undefined;
+        let paymentToken: string | undefined;
 
         /**
          * ######################################################################
