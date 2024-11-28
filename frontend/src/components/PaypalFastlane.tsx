@@ -55,7 +55,7 @@ async function initFastlane() {
 
         let memberAuthenticatedSuccessfully: boolean | undefined;
         let email: string | undefined;
-        let shippingAddress: string | undefined;
+        let shippingAddress: any;
         let paymentToken: string | undefined;
 
         /**
@@ -66,17 +66,17 @@ async function initFastlane() {
          * ######################################################################
          */
 
-        const form = document.querySelector("form");
-        const customerSection = document.getElementById("customer");
+        const form = document.querySelector("form") as HTMLFormElement;
+        const customerSection = document.getElementById("customer") as HTMLElement;
         const emailSubmitButton = document.getElementById(
             "email-submit-button"
-        );
-        const shippingSection = document.getElementById("shipping");
-        const paymentSection = document.getElementById("payment");
-        const checkoutButton = document.getElementById("checkout-button");
+        ) as HTMLButtonElement;
+        const shippingSection = document.getElementById("shipping") as HTMLElement;
+        const paymentSection = document.getElementById("payment") as HTMLElement;
+        const checkoutButton = document.getElementById("checkout-button") as HTMLButtonElement;
         let activeSection = customerSection;
 
-        const setActiveSection = (section) => {
+        const setActiveSection = (section: HTMLElement) => {
             activeSection.classList.remove("active");
             section.classList.add("active", "visited");
             activeSection = section;
@@ -94,7 +94,7 @@ async function initFastlane() {
             name: { firstName, lastName, fullName } = {},
             phoneNumber: { countryCode: telCountryCode, nationalNumber } = {},
         }) => {
-            const isNotEmpty = (field) => !!field;
+            const isNotEmpty = (field: any) => !!field;
             const summary = [
                 fullName || [firstName, lastName].filter(isNotEmpty).join(" "),
                 [addressLine1, addressLine2].filter(isNotEmpty).join(", "),
@@ -110,8 +110,8 @@ async function initFastlane() {
             return summary.filter(isNotEmpty).join("\n");
         };
 
-        const setShippingSummary = (address) => {
-            shippingSection.querySelector(".summary").innerText =
+        const setShippingSummary = (address: any) => {
+            shippingSection.querySelector(".summary")!.innerText =
                 getAddressSummary(address);
         };
 
@@ -132,7 +132,7 @@ async function initFastlane() {
                 // reset form & state
                 email = form.elements["email"].value;
                 form.reset();
-                document.getElementById("email-input").value = email;
+                document.getElementById("email-input")!.value = email;
                 shippingSection.classList.remove("visited");
                 setShippingSummary({});
                 paymentSection.classList.remove("visited", "pinned");
@@ -169,7 +169,7 @@ async function initFastlane() {
                     }
 
                     // update form UI
-                    customerSection.querySelector(".summary").innerText = email;
+                    customerSection.querySelector(".summary")!.innerText = email;
                     if (shippingAddress) {
                         setShippingSummary(shippingAddress);
                     }
@@ -190,11 +190,11 @@ async function initFastlane() {
         emailSubmitButton.removeAttribute("disabled");
 
         document
-            .getElementById("email-edit-button")
+            .getElementById("email-edit-button")!
             .addEventListener("click", () => setActiveSection(customerSection));
 
         document
-            .getElementById("shipping-submit-button")
+            .getElementById("shipping-submit-button")!
             .addEventListener("click", () => {
                 // extract form values
                 const firstName = form.elements["given-name"].value;
@@ -236,7 +236,7 @@ async function initFastlane() {
             });
 
         document
-            .getElementById("shipping-edit-button")
+            .getElementById("shipping-edit-button")!
             .addEventListener("click", async () => {
                 if (memberAuthenticatedSuccessfully) {
                     // open Shipping Address Selector for Fastlane members
@@ -260,7 +260,7 @@ async function initFastlane() {
             });
 
         document
-            .getElementById("payment-edit-button")
+            .getElementById("payment-edit-button")!
             .addEventListener("click", () => setActiveSection(paymentSection));
 
         checkoutButton.addEventListener("click", async () => {
