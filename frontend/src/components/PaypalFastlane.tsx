@@ -137,8 +137,13 @@ async function initFastlane() {
         };
 
         const setShippingSummary = (address: any) => {
-            shippingSection.querySelector(".summary")!.innerText =
-                getAddressSummary(address);
+            const summaryElement = shippingSection.querySelector(".summary") as HTMLElement | null;
+            
+            if (summaryElement) {
+                summaryElement.innerText = getAddressSummary(address);
+            } else {
+                console.warn('No .summary element found');
+            }
         };
 
         /**
