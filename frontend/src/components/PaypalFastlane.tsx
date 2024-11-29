@@ -197,16 +197,16 @@ async function initFastlane() {
             .getElementById("shipping-submit-button")!
             .addEventListener("click", () => {
                 // extract form values
-                const firstName = form.elements["given-name"].value;
-                const lastName = form.elements["family-name"].value;
-                const addressLine1 = form.elements["address-line1"].value;
-                const addressLine2 = form.elements["address-line2"].value;
-                const adminArea2 = form.elements["address-level2"].value;
-                const adminArea1 = form.elements["address-level1"].value;
-                const postalCode = form.elements["postal-code"].value;
-                const countryCode = form.elements["country"].value;
-                const telCountryCode = form.elements["tel-country-code"].value;
-                const telNational = form.elements["tel-national"].value;
+                const firstName = (form.elements.namedItem("given-name") as HTMLInputElement).value;
+                const lastName = (form.elements.namedItem("family-name") as HTMLInputElement).value;
+                const addressLine1 = (form.elements.namedItem("address-line1") as HTMLInputElement).value;
+                const addressLine2 = (form.elements.namedItem("address-line2") as HTMLInputElement).value;
+                const adminArea2 = (form.elements.namedItem("address-level2") as HTMLInputElement).value;
+                const adminArea1 = (form.elements.namedItem("address-level1") as HTMLInputElement).value;
+                const postalCode = (form.elements.namedItem("postal-code") as HTMLInputElement).value;
+                const countryCode = (form.elements.namedItem("country") as HTMLInputElement).value;
+                const telCountryCode = (form.elements.namedItem("tel-country-code") as HTMLInputElement).value;
+                const telNational = (form.elements.namedItem("tel-national") as HTMLInputElement).value;
 
                 // update state & form UI
                 shippingAddress = {
