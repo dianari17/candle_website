@@ -8,6 +8,32 @@ interface FastlaneComponents {
     FastlaneWatermarkComponent: React.ComponentType<any>;
 }
 
+interface Address {
+    addressLine1?: string;
+    addressLine2?: string;
+    adminArea2?: string;
+    adminArea1?: string;
+    postalCode?: string;
+    countryCode?: string;
+}
+
+interface Name {
+    firstName?: string;
+    lastName?: string;
+    fullName?: string;
+}
+
+interface PhoneNumber {
+    countryCode?: string;
+    nationalNumber?: string;
+}
+
+interface AddressSummaryObjects {
+    address: Address;
+    name: Name;
+    phoneNumber: PhoneNumber;
+}
+
 declare global {
     interface Window {
         paypal: {
@@ -93,7 +119,7 @@ async function initFastlane() {
             } = {},
             name: { firstName, lastName, fullName } = {},
             phoneNumber: { countryCode: telCountryCode, nationalNumber } = {},
-        }) => {
+        }: AddressSummaryObjects) => {
             const isNotEmpty = (field: any) => !!field;
             const summary = [
                 fullName || [firstName, lastName].filter(isNotEmpty).join(" "),
