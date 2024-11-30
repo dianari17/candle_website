@@ -62,6 +62,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(false);
 
   const navigate = useNavigate();
 
@@ -93,6 +94,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         setPasswordErrorMessage("Invalid email or password.");
         return;
     }
+    localStorage.setItem("remember", rememberMe.toString());
     navigate("/products");
   };
   
@@ -198,8 +200,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               />
             </FormControl>
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox value="remember" color="primary" onChange={(e: any) => setRememberMe(e.target.checked)}/>}
               label="Remember me"
+              
             />
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button

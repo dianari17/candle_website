@@ -9,6 +9,14 @@ import ProductsPage from './pages/ProductPage';
 import HomePage from './pages/HomePage';
 import CheckoutPage from './pages/CheckoutPage';
 
+window.addEventListener("pagehide", () => {
+  let rememberMe = localStorage.getItem("remember");
+  if(rememberMe != "true")
+  {
+    localStorage.clear()
+  }
+});
+
 function App() {
   return (
     <Router>

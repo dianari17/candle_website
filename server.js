@@ -235,7 +235,6 @@ function getID(token) {
         return jwt.verify(token, process.env.JWT_SECRET).user.id;
     }
     catch(e) {
-        console.error(e.toString());
         return false;
     }
 }

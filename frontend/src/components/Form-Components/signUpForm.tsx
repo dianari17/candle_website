@@ -64,6 +64,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const [lastnameError, setLastnameError] = React.useState(false);
   const [lastnameErrorMessage, setLastnameErrorMessage] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(false);
 
   const navigate = useNavigate();
 
@@ -88,6 +89,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
       setEmailErrorMessage("Email is already registered!");
       return;
     }
+    localStorage.setItem("remember", rememberMe.toString());
     navigate("/products");
   };
   
@@ -247,7 +249,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
               />
             </FormControl>
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox value="remember" color="primary" onChange={(e: any) => setRememberMe(e.target.checked)}/>}
               label="Remember me"
             />
         

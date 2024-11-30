@@ -210,11 +210,10 @@ export async function login(email: string, password: string) : Promise<{result: 
             });
         let txt = await response.text();
         let jsRes = JSON.parse(txt);
-        console.log(txt);
         if(jsRes.error == '')
         {
-                localStorage.setItem('token', jsRes.token);
-                return { result: true, error: '' };
+            localStorage.setItem('token', jsRes.token);
+            return { result: true, error: '' };
         } 
         else {
             return { result: false, error: jsRes.error };
