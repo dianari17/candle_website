@@ -16,9 +16,9 @@ import "../assets/Custom-Style-Sheets/Login.css";
 const CartPage = () => {
   const navigate = useNavigate();
 
-  const [quantity, setQuantity] = useState(1);
 
   const [cart, setCart] = useState<IProduct[]>([]);
+  const [subtotal, setSubtotal] = useState<number>(0);
 
   function moveProducts() {
     navigate("/products");
@@ -26,13 +26,6 @@ const CartPage = () => {
   function moveCheckout() {
     navigate("/checkout");
   }
-  const handleIncrement = () => {
-    setQuantity((prevQuantity) => prevQuantity + 1);
-  };
-
-  const handleDecrement = () => {
-    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
-  };
 
   async function updateCart() {
     let res = await getCart();
@@ -42,11 +35,32 @@ const CartPage = () => {
     }
     else {
       setCart(res.products);
+      calculateSubtotal(res.products);
     }
   }
 
+  // Update cart locally
   function deleteFromCart(id : string)  {
-    setCart(cart.filter((cartProduct) => cartProduct.id !== id));
+    const newCart = cart.filter((cartProduct) => cartProduct.id !== id);
+    setCart(newCart);
+    calculateSubtotal(newCart);
+  }
+  function editAmountInCart(id: string, quantity: number) {
+    console.log("UPdating");
+    cart.forEach((product : IProduct) => {
+      if(product.id === id) {
+        product.amount = quantity;
+      }
+    });
+    calculateSubtotal(cart);
+  }
+
+  function calculateSubtotal(products : IProduct[]) {
+    let subtotal = 0;
+    products.forEach((product : IProduct) => { 
+      subtotal += (product.amount * product.price);
+    });
+    setSubtotal(subtotal);
   }
 
   React.useEffect(() => { updateCart() }, []);
@@ -143,7 +157,12 @@ const CartPage = () => {
 
         {
           cart.map((product, index) => {
-            return <CartProduct {...product} key={index} deleteCallback={() => deleteFromCart(product.id)}/>
+            return <CartProduct 
+            {...product} 
+            key={index} 
+            deleteCallback={() => deleteFromCart(product.id) }
+            editAmountCallback={(quantity: number) => editAmountInCart(product.id, quantity)}
+            />
           })
         }
       </Box>
@@ -158,7 +177,7 @@ const CartPage = () => {
       >
         <Box>
           <Typography variant="body1" sx={{ fontSize: "1.2rem", color: "#FFFFFF" }}>
-            Subtotal: ${(12.00 * quantity).toFixed(2)} USD
+            Subtotal: ${subtotal.toFixed(2)} USD
           </Typography>
           <Typography variant="body2" sx={{ color: "#FFFFFFAA" }}>
             Taxes and shipping calculated at checkout

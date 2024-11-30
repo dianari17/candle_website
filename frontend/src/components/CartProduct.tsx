@@ -8,14 +8,16 @@ import Grid from "@mui/material/Grid";
 import BrandLogo from "../assets/Custom-Assets/brandLogo";
 import Footer from "../components/Footer";
 import { IProduct } from "../components/IProduct";
-import { removeFromCart } from "./APICalls";
+import { removeFromCart, updateCartAmount } from "./APICalls";
 
 interface CartProductParams extends IProduct {
   deleteCallback: () => void;
+  editAmountCallback: (quantity: number) => void;
 }
 
-export default function CartProduct({id, name, description, price, ingredients, weight, amount, deleteCallback }: CartProductParams) {
-  const [test, setTest] = React.useState('');
+export default function CartProduct({id, name, description, price, ingredients, weight, amount, deleteCallback, editAmountCallback }: CartProductParams) {
+
+  const [quantity, setQuantity] = React.useState(amount);
 
   const [imageSrc, setImageSrc] = React.useState<string | null>(null);
   async function getImage() {
@@ -34,6 +36,22 @@ export default function CartProduct({id, name, description, price, ingredients, 
     }
   }
   getImage();
+
+  async function handleDecrement() {
+    if(quantity == 1) {
+      removeFromCart(id); deleteCallback();
+    }
+    else {
+      updateCartAmount(id, quantity - 1);
+      editAmountCallback(quantity - 1);
+      setQuantity(quantity - 1);
+    }
+  }
+  async function handleIncrement() {
+    updateCartAmount(id, quantity + 1);
+    editAmountCallback(quantity + 1);
+    setQuantity(quantity + 1);
+  }
 
   return (<Grid
   container
@@ -85,18 +103,18 @@ export default function CartProduct({id, name, description, price, ingredients, 
         gap: "10px",
       }}
     >
-      <Button variant="outlined" onClick={(e: any) => console.log("Decrement")}>
+      <Button variant="outlined" onClick={(e: any) => handleDecrement()}>
         -
       </Button>
-      <Typography>{amount}</Typography>
-      <Button variant="outlined" onClick={(e: any) => console.log("Increment")}>
+      <Typography>{quantity}</Typography>
+      <Button variant="outlined" onClick={(e: any) => handleIncrement()}>
         +
       </Button>
     </Box>
   </Grid>
 
   <Grid item xs={2}>
-    ${(price * amount).toFixed(2)}
+    ${(price * quantity).toFixed(2)}
   </Grid>
 </Grid>
   )

@@ -379,7 +379,6 @@ app.post('/api/addToCart', async (req, res, next) => {
         res.status(200).json({error: error});
         return;
     }
-    console.log(cartProduct);
 
     // Get the product to add
     const productObj = await db.collection('products').findOne({ _id: ObjectId.createFromHexString(productId)});
@@ -409,7 +408,6 @@ app.post('/api/updateCartAmount', async(req, res, next) => {
         res.status(200).json({error: "Invalid token." });
         return;
     }
-
     try {
         const db = client.db();
         
