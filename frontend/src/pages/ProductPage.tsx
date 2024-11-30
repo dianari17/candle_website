@@ -18,6 +18,7 @@ import { searchProduct } from "../components/APICalls";
 export default function ProductsPage() {
   const [products, setProducts] = React.useState<IProduct[]>([]);
   const [numPages, setNumPages] = React.useState<number>(0);
+  const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [search, setSearch] = React.useState('');
 
   async function getProducts(search: string, pageNum: number) {
@@ -31,6 +32,7 @@ export default function ProductsPage() {
     {
       setProducts(res.products);
       setNumPages(res.numPages);
+      setCurrentPage(pageNum);
     }
   }
 
@@ -77,35 +79,12 @@ export default function ProductsPage() {
               </Grid>
             })
           }
-          {/* <Grid item lg={3}>
-            <ProductCard />
-          </Grid>
-          <Grid item lg={3}>
-            <ProductCard />
-          </Grid>
-          <Grid item lg={3}>
-            <ProductCard />
-          </Grid>
-          <Grid item lg={3}>
-            <ProductCard />
-          </Grid>
-          <Grid item lg={3}>
-            <ProductCard />
-          </Grid>
-          <Grid item lg={3}>
-            <ProductCard />
-          </Grid>
-          <Grid item lg={3}>
-            <ProductCard />
-          </Grid>
-          <Grid item lg={3}>
-            <ProductCard />
-          </Grid> */}
         </Grid>
       </Box>
       <Stack spacing={2} justifySelf="center" sx={{ mt: "5rem", mb: "3rem" }}>
         <Pagination
           count={numPages}
+          page={currentPage}
           renderItem={(item) => (
             <PaginationItem
               slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
