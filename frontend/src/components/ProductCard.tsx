@@ -213,7 +213,6 @@ export default function ProductCard({id, name, description, price, ingredients, 
               }}
               onClick={
                 (e: any) => { 
-                  console.log("CLICK"); 
                   onAddToCart(e, id);
                 }
               }

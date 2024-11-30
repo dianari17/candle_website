@@ -7,6 +7,9 @@ import Box from "@mui/joy/Box";
 import Grid from "@mui/material/Grid";
 import BrandLogo from "../assets/Custom-Assets/brandLogo";
 import Footer from "../components/Footer";
+import { IProduct } from "../components/IProduct";
+import { getCart } from "../components/APICalls";
+import CartProduct from "../components/CartProduct";
 
 import "../assets/Custom-Style-Sheets/Login.css";
 
@@ -14,6 +17,8 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   const [quantity, setQuantity] = useState(1);
+
+  const [cart, setCart] = useState<IProduct[]>([]);
 
   function moveProducts() {
     navigate("/products");
@@ -28,6 +33,19 @@ const CartPage = () => {
   const handleDecrement = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
+
+  async function updateCart() {
+    let res = await getCart();
+
+    if(res.error) {
+      console.error(res.error);
+    }
+    else {
+      setCart(res.products);
+    }
+  }
+
+  React.useEffect(() => { updateCart() }, []);
 
   return (
     <Box className="Cart-page" sx={{ backgroundColor: "#C8A68A", minHeight: "100vh", padding: "20px" }}>
@@ -119,66 +137,11 @@ const CartPage = () => {
           </Grid>
         </Grid>
 
-        <Grid
-          container
-          spacing={2}
-          sx={{
-            alignItems: "center",
-            padding: "20px 0",
-            borderBottom: "1px solid #FFFFFF",
-            textAlign: "center",
-            color: "#FFFFFF",
-          }}
-        >
-          <Grid item xs={6} sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <img
-              src="https://via.placeholder.com/100" // Replace with your image
-              alt="Product"
-              style={{ width: "80px", height: "80px", borderRadius: "5px" }}
-            />
-            <div>
-              <Typography sx={{ fontWeight: "bold" }}>Product Name</Typography>
-              <Button
-                variant="outlined"
-                sx={{
-                  marginTop: "10px",
-                  borderColor: "#FFFFFF",
-                  color: "#FFFFFF",
-                  "&:hover": { backgroundColor: "#FFFFFF", color: "#C8A68A" },
-                }}
-              >
-                Remove
-              </Button>
-            </div>
-          </Grid>
-
-          <Grid item xs={2}>
-            $12.00
-          </Grid>
-
-          <Grid item xs={2}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "10px",
-              }}
-            >
-              <Button variant="outlined" onClick={handleDecrement}>
-                -
-              </Button>
-              <Typography>{quantity}</Typography>
-              <Button variant="outlined" onClick={handleIncrement}>
-                +
-              </Button>
-            </Box>
-          </Grid>
-
-          <Grid item xs={2}>
-            ${(12.00 * quantity).toFixed(2)}
-          </Grid>
-        </Grid>
+        {
+          cart.map((product, index) => {
+            return <CartProduct {...product} key={index}/>
+          })
+        }
       </Box>
 
       <Box

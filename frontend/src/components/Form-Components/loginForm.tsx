@@ -85,7 +85,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     if(!email || !password) { return; }
     const response = await login(email, password);
-    console.log(email, password);
     if(!response.result)
     {
         setEmailError(true);

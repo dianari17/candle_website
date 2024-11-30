@@ -358,6 +358,29 @@ app.post('/api/addToCart', async (req, res, next) => {
     }
     const db = client.db();
 
+    const cartProduct = await db.collection('users').findOne({
+        _id: ObjectId.createFromHexString(userId), 
+        "Cart.id": ObjectId.createFromHexString(productId)
+    },
+    {
+        projection: {
+            Cart: {$elemMatch: { id: ObjectId.createFromHexString(productId) } }
+        }
+    });
+
+    // Cart product already exists, so just increment the amount in the cart 
+    // instead of adding new item
+    if(cartProduct) {
+        const amount = cartProduct.Cart[0].amount + 1;
+        let response = await db.collection('users').updateOne(
+            {_id: ObjectId.createFromHexString(userId), "Cart.id": ObjectId.createFromHexString(productId)}, 
+            {$set: { "Cart.$.amount": amount }
+        });
+        res.status(200).json({error: error});
+        return;
+    }
+    console.log(cartProduct);
+
     // Get the product to add
     const productObj = await db.collection('products').findOne({ _id: ObjectId.createFromHexString(productId)});
 
@@ -432,6 +455,7 @@ app.post('/api/removeFromCart', async (req, res, next) => {
 app.post('/api/getCart', async (req, res, next) => {
     var error = '';
     var products = [];
+    var amounts = [];
     const { token } = req.body;
 
     // Ensure only the sender is allowed to view the cart
@@ -451,6 +475,7 @@ app.post('/api/getCart', async (req, res, next) => {
         }
         const cart = user.Cart;
 
+        amounts = cart.map(item => item.amount);
         // Find the items in the cart
         const ids = cart.map(item => item.id);
         products = await db.collection('products').find({_id: { $in: ids }}).toArray();
@@ -459,7 +484,7 @@ app.post('/api/getCart', async (req, res, next) => {
         error = e.toString();
         console.log(error);
     }
-    res.status(200).json({products: products, error: error});
+    res.status(200).json({products: products, amounts: amounts, error: error});
 });
 
 app.post('/api/register', async (req, res) => {

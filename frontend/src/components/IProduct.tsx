@@ -5,4 +5,5 @@ export interface IProduct {
     price: number;
     ingredients: string,
     weight: number
+    amount: number
 }
