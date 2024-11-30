@@ -65,7 +65,7 @@ async function initFastlane() {
         });
 
         
-
+        //Frontend team can you fix this, as I'm not sure how to implement our react components to fix the errors here
         const paymentComponent =
             await FastlanePaymentComponent(); 
         (
@@ -161,7 +161,7 @@ async function initFastlane() {
                 emailSubmitButton.setAttribute("disabled", "");
 
                 // reset form & state
-                email = form.elements["email"].value;
+                email = (form.elements.namedItem("email") as HTMLInputElement).value;
                 form.reset();
                 document.getElementById("email-input")!.value = email;
                 shippingSection.classList.remove("visited");
@@ -306,8 +306,7 @@ async function initFastlane() {
                 // send transaction details to back-end
                 const headers = new Headers();
                 headers.append("Content-Type", "application/json");
-                const isShippingRequired =
-                    form.elements["shipping-required"].checked;
+                const isShippingRequired = (form.elements.namedItem("shipping-required") as HTMLInputElement).value;
                 const body = JSON.stringify({
                     ...(isShippingRequired && { shippingAddress }),
                     paymentToken,
