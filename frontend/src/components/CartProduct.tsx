@@ -10,7 +10,13 @@ import Footer from "../components/Footer";
 import { IProduct } from "../components/IProduct";
 import { removeFromCart } from "./APICalls";
 
-export default function CartProduct({id, name, description, price, ingredients, weight, amount }: IProduct) {
+interface CartProductParams extends IProduct {
+  deleteCallback: () => void;
+}
+
+export default function CartProduct({id, name, description, price, ingredients, weight, amount, deleteCallback }: CartProductParams) {
+  const [test, setTest] = React.useState('');
+
   const [imageSrc, setImageSrc] = React.useState<string | null>(null);
   async function getImage() {
     try { 
@@ -59,7 +65,7 @@ export default function CartProduct({id, name, description, price, ingredients, 
           color: "#FFFFFF",
           "&:hover": { backgroundColor: "#FFFFFF", color: "#C8A68A" },
         }}
-        //onClick={(e: any) => removeFromCart(id)}
+        onClick={(e: any) => { removeFromCart(id); deleteCallback(); }}
       >
         Remove
       </Button>

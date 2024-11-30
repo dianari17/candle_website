@@ -45,6 +45,10 @@ const CartPage = () => {
     }
   }
 
+  function deleteFromCart(id : string)  {
+    setCart(cart.filter((cartProduct) => cartProduct.id !== id));
+  }
+
   React.useEffect(() => { updateCart() }, []);
 
   return (
@@ -139,7 +143,7 @@ const CartPage = () => {
 
         {
           cart.map((product, index) => {
-            return <CartProduct {...product} key={index}/>
+            return <CartProduct {...product} key={index} deleteCallback={() => deleteFromCart(product.id)}/>
           })
         }
       </Box>
