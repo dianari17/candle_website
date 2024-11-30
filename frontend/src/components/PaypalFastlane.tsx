@@ -1,5 +1,5 @@
 import React from 'react';
-import Fastlane from './checkout.tsx';
+//import Fastlane from './checkout.tsx';
 
 interface FastlaneComponents {
     identity: any;
@@ -163,7 +163,15 @@ async function initFastlane() {
                 // reset form & state
                 email = (form.elements.namedItem("email") as HTMLInputElement).value;
                 form.reset();
-                document.getElementById("email-input")!.value = email;
+
+                const emailInput = document.getElementById("email-input") as HTMLInputElement | null;
+
+                if (emailInput) {
+                    emailInput.value = email;
+                } else {
+                    console.warn('No element with id "email-input" found');
+                }
+
                 shippingSection.classList.remove("visited");
                 setShippingSummary({});
                 paymentSection.classList.remove("visited", "pinned");
@@ -200,7 +208,14 @@ async function initFastlane() {
                     }
 
                     // update form UI
-                    customerSection.querySelector(".summary")!.innerText = email;
+
+                    const summaryElement = customerSection.querySelector(".summary");
+
+                    if (summaryElement) {
+                        summaryElement.textContent = email;  // Use textContent instead of innerText in an attempt to fix the bug
+                    } else {
+                        console.warn('No .summary element found in the customer section');
+                    }
                     if (shippingAddress) {
                         setShippingSummary(shippingAddress);
                     }
