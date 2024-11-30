@@ -18,6 +18,7 @@ import { searchProduct } from "../components/APICalls";
 export default function ProductsPage() {
   const [products, setProducts] = React.useState<IProduct[]>([]);
   const [numPages, setNumPages] = React.useState<number>(0);
+  const [search, setSearch] = React.useState('');
 
   async function getProducts(search: string, pageNum: number) {
     let res : {products: IProduct[], numPages: number, error: string } = await searchProduct(search, pageNum, 4);
@@ -54,13 +55,18 @@ export default function ProductsPage() {
       ></div>
       <Box sx={{ flexGrow: 1, mt: "9rem", ml: "15rem" }}>
         <Box sx={{ display: "flex", alignItems: "center", mb: "2rem" }}>
-          <Button variant="contained" sx={{ mr: "1rem" }}>
+          <Button 
+            variant="contained" 
+            sx={{ mr: "1rem" }}
+            onClick={(e: any) => getProducts(search, 1)}
+          >
             Search
           </Button>
           <TextField
             placeholder="Search products..."
             variant="outlined"
             sx={{ width: "60%", backgroundColor: "white" }}
+            onChange={(e: any)=> setSearch(e.target.value) }
           />
         </Box>
         <Grid container spacing={4}>

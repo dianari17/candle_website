@@ -188,7 +188,7 @@ export async function searchProduct(query: string, pageNum: number, productsPerP
         for(let i = 0; i < rawProducts.length; i++)
         {
             let cur = rawProducts[i];
-            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: 0, ingredients: cur.Ingredients, weight: cur.Weight});
+            products.push({id: cur._id, name: cur.Product, description: cur.Description, price: cur.Price, ingredients: cur.Ingredients, weight: cur.Weight});
         }
         return { products: products, numPages: numPages, error: ''};
     }

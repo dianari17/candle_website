@@ -331,7 +331,7 @@ app.post('/api/searchProducts', async (req, res, next) => {
         var search = searchInput.trim();
     
         const db = client.db();
-        products = await db.collection('products').find({ "Product": { $regex: search + '.*' } }).skip(skip).limit(limit).toArray();
+        products = await db.collection('products').find({ "Product": { $regex: new RegExp('.*' + search + '.*', 'i')} }).skip(skip).limit(limit).toArray();
         const totalCount = await db.collection('products').countDocuments({ "Product": { $regex: search + '.*' } });
 
         numPages = Math.ceil(totalCount / productsPerPage);
