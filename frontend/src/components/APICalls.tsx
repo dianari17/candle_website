@@ -237,7 +237,6 @@ export async function register(firstname: string, lastname: string, email: strin
             });
         let txt = await response.text();
         let jsRes = JSON.parse(txt);
-        console.log(txt);
         if(jsRes.error == '')
         {
             localStorage.setItem('token', jsRes.token);

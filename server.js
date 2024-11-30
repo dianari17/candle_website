@@ -234,7 +234,8 @@ function getID(token) {
     try {
         return jwt.verify(token, process.env.JWT_SECRET).user.id;
     }
-    catch {
+    catch(e) {
+        console.error(e.toString());
         return false;
     }
 }
@@ -505,10 +506,9 @@ app.post('/api/register', async (req, res) => {
         user = await db.collection('users').insertOne({FirstName: firstname, Cart: [], LastName: lastname, Email: email, Password: hash, Role: 'user'});
         const payload = {
             user: {
-                id: user._id
+                id: user.insertedId
             }
         };
-
         // Return token so user can authenticate later
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600}, 
             (err, token) => {
@@ -576,6 +576,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({error: "Invalid username or password."});
         }
 
+        
         const payload = {
             user: {
                 id: user._id
