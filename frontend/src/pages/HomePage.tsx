@@ -1,6 +1,7 @@
-import TestUI from "../components/TestUI";
 import NavigationBar from "../components/NavigationBar";
 import CustomCarousel from "../components/CustomCarousel";
+import Footer from "../components/Footer";
+
 
 const HomePage = () => {
   return (
@@ -32,6 +33,7 @@ const HomePage = () => {
         }}>
         <CustomCarousel />
       </div>
+      <Footer />
     </div>
   );
 };

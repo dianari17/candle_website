@@ -1,6 +1,7 @@
 import React from "react";
 import "../assets/Custom-Assets/aboutUs";
 import NavigationBar from "../components/NavigationBar";
+import Footer from "../components/Footer";
 import AboutUs from "../assets/Custom-Assets/aboutUs";
 const AboutPage = () => {
   return (
@@ -24,6 +25,7 @@ const AboutPage = () => {
       <div style={{marginTop:"10rem"}}>
         <AboutUs />
       </div>
+      <Footer />
     </div>
   );
 };

@@ -7,6 +7,8 @@ import CartPage from './pages/CartPage';
 import SignupPage from './pages/SignupPage';
 import ProductsPage from './pages/ProductPage';
 import HomePage from './pages/HomePage';
+import CheckoutPage from './pages/CheckoutPage';
+
 function App() {
   return (
     <Router>
@@ -18,6 +20,8 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/products" element={<ProductsPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+
       </Routes>
     </Router>
   );
