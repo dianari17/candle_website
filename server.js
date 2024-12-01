@@ -241,7 +241,7 @@ function getID(token) {
 
 app.post('/api/addProduct', upload.single('productImage'), async (req, res, next) => {
 
-    const { product, description, token, ingredients, weight } = req.body;
+    const { product, description, price, token, ingredients, weight } = req.body;
 
     console.log("Uploaded file:", req.file);
     console.log("Buffer: ", req.file.buffer);
@@ -258,9 +258,10 @@ app.post('/api/addProduct', upload.single('productImage'), async (req, res, next
     { 
         Product: product, 
         Description: description, 
+        Price: Number(price),
         Image: { data: Buffer.from(req.file.buffer), contentType: req.file.mimetype, },
         Ingredients: ingredients,
-        Weight: weight,
+        Weight: Number(weight),
     };
     var error = '';
     try {
@@ -586,7 +587,7 @@ app.post('/api/login', async (req, res) => {
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600}, 
             (err, token) => {
                 if(err) throw err;
-                res.status(200).json({token: token, error: ''});
+                res.status(200).json({token: token, role: user.Role, error: ''});
             }
         );
     }

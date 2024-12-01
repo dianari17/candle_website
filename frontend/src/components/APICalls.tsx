@@ -3,13 +3,16 @@ import {IProduct} from './IProduct'
 const server = 'http://localhost:5000/api/'
 
 // TODO: Use IProduct for this
-export async function addProduct(product : string, description: string, image: File) : Promise<string> {
+export async function addProduct(product : string, description: string, price : string, weight : string, ingredients : string, image: File) : Promise<string> {
     // Use form data to handle image transfer
     const formData = new FormData();
     
     formData.append('product', product);
     formData.append('description', description);
     formData.append('productImage', image);
+    formData.append('price', price);
+    formData.append('weight', weight);
+    formData.append('ingredients', ingredients);
     formData.append('token', localStorage.getItem('token') || '');
 
     try {
@@ -33,6 +36,7 @@ export async function addProduct(product : string, description: string, image: F
 
 export async function deleteProduct(productId: string) : Promise<string> {
     let payload = JSON.stringify({ productId: productId, token: localStorage.getItem('token') });
+    console.log(localStorage.getItem('token'));
     try {
         const response = await
             fetch(server + 'deleteProduct', {
@@ -213,6 +217,8 @@ export async function login(email: string, password: string) : Promise<{result: 
         if(jsRes.error == '')
         {
             localStorage.setItem('token', jsRes.token);
+            localStorage.setItem('role', jsRes.role);
+            console.log(jsRes.role);
             return { result: true, error: '' };
         } 
         else {

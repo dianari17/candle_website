@@ -31,7 +31,7 @@ function TestUI() {
             console.error("No image file uploaded.");
             return;
         }
-        setAddResult(await addProduct(product, "Default description", image));
+        //setAddResult(await addProduct(product, "Default description", image));
     }
 
     

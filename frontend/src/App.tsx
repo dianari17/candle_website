@@ -8,6 +8,7 @@ import SignupPage from './pages/SignupPage';
 import ProductsPage from './pages/ProductPage';
 import HomePage from './pages/HomePage';
 import CheckoutPage from './pages/CheckoutPage';
+import AdminPage from './pages/AdminPage';
 
 window.addEventListener("pagehide", () => {
   let rememberMe = localStorage.getItem("remember");
@@ -29,6 +30,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/admin" element={<AdminPage />} />
 
       </Routes>
     </Router>

@@ -59,7 +59,7 @@ function NavigationBar() {
             }}
           />
         </Grid>
-        <Grid item xs={4} md={1}>
+        <Grid item xs={5} md={1}>
           <button
             style={buttonStyle("/")}
             onClick={() => navigate("/")}
@@ -72,7 +72,7 @@ function NavigationBar() {
             Home
           </button>
         </Grid>
-        <Grid item xs={4} md={1}>
+        <Grid item xs={5} md={1}>
           <button
             style={buttonStyle("/products")}
             onClick={() => navigate("/products")}
@@ -85,7 +85,7 @@ function NavigationBar() {
             Products
           </button>
         </Grid>
-        <Grid item xs={4} md={1}>
+        <Grid item xs={5} md={1}>
           <button
             style={buttonStyle("/about")}
             onClick={() => navigate("/about")}
@@ -98,7 +98,7 @@ function NavigationBar() {
             About Us
           </button>
         </Grid>
-        <Grid item xs={4} md={1}>
+        <Grid item xs={5} md={1}>
           <button
             style={buttonStyle("/login")}
             onClick={() => navigate("/login")}
@@ -111,6 +111,25 @@ function NavigationBar() {
             Account
           </button>
         </Grid>
+        {
+          localStorage.getItem("role") === "admin" ? 
+          <Grid item xs={5} md={1}>
+          <button
+            style={buttonStyle("/admin")}
+            onClick={() => navigate("/admin")}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#644934")}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color =
+                location.pathname === "/admin" ? "#644934" : "#FFF";
+            }}
+          >
+            Admin
+          </button>
+        </Grid>
+          :
+          <></>
+        }
+        
         <Grid
           item
           xs={4}

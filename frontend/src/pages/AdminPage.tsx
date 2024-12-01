@@ -14,8 +14,11 @@ import TextField from "@mui/material/TextField";
 import "../assets/Custom-Style-Sheets/christinasStyleSheet.css";
 import { IProduct } from '../components/IProduct';
 import { searchProduct } from "../components/APICalls";
+import AdminProduct from "../components/AdminProduct";
+import AddProduct from '../components/Form-Components/addProductForm'
 
-export default function ProductsPage() {
+
+function AdminPage() {
   const [products, setProducts] = React.useState<IProduct[]>([]);
   const [numPages, setNumPages] = React.useState<number>(0);
   const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -75,7 +78,7 @@ export default function ProductsPage() {
           {
             products.map((product, index) => {
               return <Grid item lg={3} key={index}>
-                <ProductCard {...product}/>
+                <AdminProduct {...product} onChangeCallback={() => getProducts(search, currentPage)}/>
               </Grid>
             })
           }
@@ -97,7 +100,9 @@ export default function ProductsPage() {
           shape="rounded"
         />
       </Stack>
-      <Footer />
+      <AddProduct/>
     </div>
   );
 }
+
+export default AdminPage;
