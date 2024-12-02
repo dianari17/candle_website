@@ -597,6 +597,19 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+app.post('/api/submitFeedback', async (req, res) => {
+    const { name, email, message } = req.body;
+
+    try {
+        const db = client.db();
+        await db.collection('feedback').insertOne({ name, email, message, createdAt: new Date() });
+        res.status(200).json({ message: 'Feedback submitted successfully.' });
+    } catch (err) {
+        res.status(500).json({ error: err.toString() });
+    }
+});
+
+
 
 
 app.listen(5000);
